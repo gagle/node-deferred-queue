@@ -1,0 +1,22 @@
+{
+	"name": "deferred-queue",
+	"version": "0.0.1",
+	"description": "Asynchronous deferred queue",
+	"keywords": ["asynchronous", "deferred", "queue", "flow"],
+	"author": {
+		"name": "Gabriel Llamas",
+		"email": "gaglekas@gmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Gagle/Node-DeferredQueue.git"
+	},
+	"engines": {
+		"node": "*"
+	},
+	"licenses": [{
+		"type": "MIT",
+		"url": "http://www.opensource.org/licenses/mit-license.html"
+	}],
+	"main": "lib/deferred-queue"
+}
