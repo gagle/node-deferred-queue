@@ -115,7 +115,7 @@ With a deferred queue you can simply write:
 ```javascript
 q
 	.on ("error", function (error){
-		//Any error returned by A, B, C, D or E
+		//Any error returned by A, B or the pushed anonymous function
 	})
 	.push (A)
 	.push (B)
@@ -125,7 +125,7 @@ q
 					D (cb));
 				}else{
 					E (function (error){
-						cb ();
+						cb (error);
 						if (error) q.restart ();
 					});
 				}
