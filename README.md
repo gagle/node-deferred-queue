@@ -160,6 +160,10 @@ var df = require ("deferred-queue");
 q = df.create ();
 var b = false;
 
+q.on ("error", function (error){
+	console.error ("something went wrong: " + error);
+});
+
 q.push (function (cb){
 	process.nextTick (function (){
 		console.log (1);
@@ -190,9 +194,7 @@ q.push (function (cb){
 		}
 	});
 }, function (error, msg){
-	if (error){
-		console.log (error);
-	}else{
+	if (!error){
 		console.log (msg);
 		q.restart ();
 	}
