@@ -9,7 +9,7 @@ Version: 0.0.1
 
 A deferred queue enqueues tasks synchronously and executes them asynchronously.
 
-Have you seen the [Redis driver](https://github.com/mranney/node_redis) and the [Express middleware](https://github.com/visionmedia/express)? This is how a deferred queue works.
+Have you seen the [Redis driver](https://github.com/mranney/node_redis) and the [Express middleware](https://github.com/visionmedia/express)? This is how a deferred queue works. It's a very simplified version of [promises](https://github.com/kriskowal/q).
 
 Say you want to execute some asynchronous tasks in the following order: A, B, C. You can do:
 
