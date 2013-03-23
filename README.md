@@ -107,7 +107,7 @@ var fn = function (){
 fn ();
 ```
 
-Have you noticed that if E fails 10 times all the content of fn has to be recreated every time? That's very inefficient. 
+Have you noticed that if E fails 10 times all the content of `fn` has to be recreated every time? That's very inefficient. 
 What about if A, B, C and D can also return errors? Don't make me write the code.
 
 With a deferred queue you can simply write:
@@ -135,7 +135,7 @@ q
 
 The benefits are:
 - You don't need to nest calls.
-- The content is created only once. When you call to restart you're just executing the previous tasks again. Well, in fact, in the previous example the functions that are passed to C and E are created every restart but this is because they're not in the queue. All the functions that are enqueued with `push()` are only created once.
+- The content is created only once. When you call to `restart()` you're just executing the previous tasks again. Well, in fact, in the previous example the functions that are passed to C and E are created every restart but this is because they're not in the queue. All the functions that are enqueued with `push()` are only created once.
 - When a function is pushed it is added to the queue and tries to execute. If there are pending functions that needs to execute, it simply waits. You can imagine it as a dynamic queue that can increase in size at any time and is always executing.
 
 	```javascript
@@ -147,18 +147,18 @@ The benefits are:
 	q.push (B);
 	```
 	
-	If A, B, C are asynchronous: A → B → C → D.  
-	If A, B, C are synchronous: A → C → D → B.
-- It is very useful when you need to do some asynchronous tasks in a certain order or you want to expose your asynchronous functions so the user can use them in a synchronous way but executed asynchronously, like node-redis does. In fact, node-redis could be simplified building its api above a deferred queue.
+	If A, B, C, D are asynchronous: A → B → C → D.  
+	If A, B, C, D are synchronous: A → C → D → B.
+- It is very useful when you need to do some asynchronous tasks in a certain order or you want to expose your asynchronous functions so the user can use them in a synchronous way but executed asynchronously, like [node-redis](https://github.com/mranney/node_redis) does.
 
 
 #### Example ####
 
 ```javascript
-var df = require ("deferred-queue");
+var dq = require ("deferred-queue");
 
-q = df.create ();
-var b = false;
+var q = dq.create ();
+var again = true;
 
 q.on ("error", function (error){
 	console.error ("something went wrong: " + error);
@@ -186,8 +186,8 @@ q.push (function (cb){
 q.push (function (cb){
 	process.nextTick (function (){
 		console.log (3);
-		if (!b){
-			b = true;
+		if (again){
+			again = false;
 			cb (null, "again");
 		}else{
 			cb ("error");
@@ -220,14 +220,13 @@ again
 2
 (1000ms delay)
 3
-error
 something went wrong: error
 */
 ```
 
 #### Methods and Properties ####
 
-- [df.create()](#create)
+- [dq.create()](#create)
 - [Queue#pause()](#pause)
 - [Queue#push(task[, result])](#push)
 - [Queue#restart()](#restart)
@@ -244,7 +243,9 @@ Pauses the queue execution.
 
 <a name="push"></a>
 __Queue#push(task[, result])__  
-Adds a task. A callback is passed as a parameter that needs to be called once the task finishes. You can pass any parameters -the first must be the error, if any- to this callback and they will be redirected to the result function. If the task returns an error the next tasks won't be executed. The error is also emited as an event, this means that the queue is also an event emitter.
+Adds a task and tries to execute it. If there are pending tasks, the task waits until all the previous tasks have been executed. A callback is passed as a parameter that needs to be called once the task finishes. You can pass any parameters -the first must be the error, if any, or null- to this callback and they will be redirected to the result callback.
+
+If the task returns an error an `error` event is emitted, then the result callback is called and the next tasks are not executed.
 
 <a name="restart"></a>
 __Queue#restart()__  
@@ -256,4 +257,4 @@ Resumes the queue execution from the next task it was paused.
 
 <a name="stop"></a>
 __Queue#stop()__  
-Stops the queue execution and resets to the first task. It can be executed again with resume or restart.
+Stops the queue execution and resets to the first task. It can be executed again with `resume()` or `restart()`.
