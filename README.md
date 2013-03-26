@@ -5,7 +5,7 @@ _Node.js project_
 
 #### Asynchronous deferred queue ####
 
-Version: 0.0.1
+Version: 0.0.2
 
 A deferred queue enqueues tasks synchronously and executes them asynchronously.
 
