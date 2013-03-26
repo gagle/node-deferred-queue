@@ -202,7 +202,7 @@ q.push (function (cb){
 
 q.push (function (cb){
 	//Never executes, the first time because the queue is restarted and the second
-	//because the previous tasks returns an error
+	//because the previous task returns an error
 	process.nextTick (function (){
 		console.log (4);
 	});
