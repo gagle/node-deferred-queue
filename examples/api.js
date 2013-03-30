@@ -60,8 +60,8 @@ var User = function (client){
 	return new User (this);
 };
 
-var addTask = function (queue, task, cb){
-	queue.push (task, function (error){
+User.prototype._addTask = function (task, cb){
+	this._queue.push (task, function (error){
 		//Errors are redirected to the error handler, we don't want to pass them to
 		//the possible callback
 		if (error) return;
@@ -75,7 +75,7 @@ var addTask = function (queue, task, cb){
 };
 
 User.prototype.create = function (u, cb){
-	addTask (this._queue, function (cb){
+	this._addTask (function (cb){
 		//Simulates a database insert()
 		process.nextTick (function (){
 			users.push (u);
@@ -86,7 +86,7 @@ User.prototype.create = function (u, cb){
 };
 
 User.prototype.read = function (u, cb){
-	addTask (this._queue, function (cb){
+	this._addTask (function (cb){
 		//Simulates a database find()
 		process.nextTick (function (){
 			for (var i=0, len=users.length; i<len; i++){
@@ -98,7 +98,7 @@ User.prototype.read = function (u, cb){
 };
 
 User.prototype.update = function (u, args, cb){
-	addTask (this._queue, function (cb){
+	this._addTask (function (cb){
 		//Simulates a database update()
 		process.nextTick (function (){
 			for (var i=0, len=users.length; i<len; i++){
@@ -115,7 +115,7 @@ User.prototype.update = function (u, args, cb){
 };
 
 User.prototype.remove = function (u, cb){
-	addTask (this._queue, function (cb){
+	this._addTask (function (cb){
 		//Simulates a database remove()
 		process.nextTick (function (){
 			for (var i=0, len=users.length; i<len; i++){
