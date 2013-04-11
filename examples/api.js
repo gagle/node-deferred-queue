@@ -3,7 +3,7 @@
 /*
 Shows how to build a client that connects to a database and performs CRUD
 operations with a user. It can be easily refactored in order to connect to a
-RESTful server and send http requests.
+restful server and send http requests.
 */
 
 var events = require ("events");
