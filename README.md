@@ -135,7 +135,7 @@ q
 
 The benefits are:
 - You don't need to nest calls.
-- The content is created only once. When you call to `restart()` you're just executing the previous tasks again. Well, in fact, in the previous example the functions that are passed to C and E are created every restart but this is because they're not in the queue. All the functions that are enqueued with `push()` are only created once.
+- The content is created only once. When you call to `restart()` you're just executing the previous tasks again. Well, in fact, in the previous example the functions that are passed to C and E are created on each restart but this is because they're not in the queue. All the functions that are enqueued with `push()` are only created once.
 - When a function is pushed it is added to the queue and tries to execute. If there are pending functions that needs to execute, it simply waits. You can imagine it as a dynamic queue that can increase in size at any time and is always executing.
 
 	```javascript
