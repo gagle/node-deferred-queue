@@ -33,11 +33,12 @@ var Client = function (hostname, port){
 util.inherits (Client, events.EventEmitter);
 
 Client.prototype._connect = function (){
-	//Connect to this._hostname, this._port
+	//Simulates a database connect()
 	process.nextTick (this.emit.bind (this, "connect"));
 };
 
 Client.prototype.disconnect = function (){
+	//Simulates a database disconnect()
 	process.nextTick (this.emit.bind (this, "disconnect"));
 };
 
