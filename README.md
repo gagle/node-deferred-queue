@@ -149,7 +149,7 @@ The benefits are:
 	
 	If A, B, C, D are asynchronous: A → B → C → D.  
 	If A, B, C, D are synchronous: A → C → D → B.
-- It is very useful when you need to do some asynchronous tasks in a certain order or you want to expose your asynchronous functions so the user can use them in a synchronous way but executed asynchronously, like [node-redis](https://github.com/mranney/node_redis) does.
+- It is very useful when you need to execute some asynchronous tasks with a certain order or you want to expose your asynchronous functions in a synchronous way, like [node-redis](https://github.com/mranney/node_redis) does.
 
 
 #### Example ####
