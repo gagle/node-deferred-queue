@@ -1,6 +1,9 @@
-v0.0.2 (23 Mar 2012)
-	If a task retuns an error the error event listener is called before the task
-		callback.
+v0.0.3 (10 Aug 2013)
+	Synchronous tasks can be added.
+	The "error" event is emitted after the callback.
 
-v0.0.1 (12 Mar 2012)
-	First commit.
+v0.0.2 (23 Mar 2013)
+	The "error" event is emitted before the callback.
+
+v0.0.1 (12 Mar 2013)
+	First release.

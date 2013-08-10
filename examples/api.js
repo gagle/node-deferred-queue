@@ -1,14 +1,14 @@
 "use strict";
 
 /*
-Shows how to build a client that connects to a database and performs CRUD
+Shows how to build a client app that connects to a database and performs CRUD
 operations with a user. It can be easily refactored in order to connect to a
 restful server and send http requests.
 */
 
 var events = require ("events");
 var util = require ("util");
-var dq = require ("../lib/deferred-queue");
+var dq = require ("../lib");
 
 //Simulates a database
 var users = [];
@@ -52,14 +52,19 @@ var init = function (client){
 };
 
 var User = function (client){
+	//"this" points to the user instance
 	if (this instanceof User){
 		if (arguments.length !== 1){
 			throw new Error ("USER_INVALID_CALL");
 		}
 		return init.call (this, client);
 	}
+	//"this" points to the client instance
+	//The constructor is called without "new"
 	return new User (this);
 };
+
+Client.prototype.User = User;
 
 User.prototype._addTask = function (task, cb){
 	this._queue.push (task, function (error){
@@ -67,10 +72,10 @@ User.prototype._addTask = function (task, cb){
 		//the possible callback
 		if (error) return;
 		if (cb){
-			//Remove the first parameter (error)
+			//Remove the first parameter, the error (null)
 			var args = Array.prototype.slice.call (arguments);
 			args.shift ();
-			cb.apply (undefined, args);
+			cb.apply (null, args);
 		}
 	});
 };
@@ -130,9 +135,6 @@ User.prototype.remove = function (u, cb){
 	return this;
 };
 
-Client.prototype.User = User;
-
-
 /*
 Usage example:
 
@@ -143,7 +145,7 @@ Usage example:
 5. Remove Maria
 6. Read Paul
 
-If any of these operations fail the queue is stopped and the error handler is
+If any of these operations fail the queue is paused and the error handler is
 executed with the error.
 
 A deferred queue is useful when you need to execute tasks with an specific
@@ -179,3 +181,9 @@ c.on ("connect", function (){
 c.on ("disconnect", function (){
 	console.log ("Users: " + util.inspect (users, null, true));
 });
+
+/*
+Maria: { name: "Maria", age: 23 }
+Paul: { name: "Paul", age: 10, location: "Spain" }
+Users: [ { name: "Paul", age: 10, location: "Spain" } ]
+*/
