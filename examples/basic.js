@@ -18,9 +18,24 @@ dq.create ()
 			//This function is executed with the result of the task
 			//v1 is 1
 			//v2 is 2
+			console.log (v1, v2);
 		})
 		.push (function (cb){
-			//Simuates an asynchronous task
+			process.nextTick (function (){
+				cb (null, 5, 6);
+			});
+		}, function (error, v1, v2){
+			console.log (v1, v2);
+		})
+		.unshift (function (cb){
+			//The task is added to the beginning of the array
+			process.nextTick (function (){
+				cb (null, 3, 4);
+			});
+		}, function (error, v1, v2){
+			console.log (v1, v2);
+		})
+		.push (function (cb){
 			process.nextTick (function (){
 				cb (new Error ("error"));
 			});
@@ -37,3 +52,10 @@ dq.create ()
 			//This task is never executed because the previous task returned an error,
 			//the queue is automatically paused
 		});
+
+/*
+1 2
+3 4
+5 6
+[Error: error]
+*/

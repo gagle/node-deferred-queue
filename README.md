@@ -5,23 +5,57 @@ _Node.js project_
 
 #### Asynchronous deferred queue ####
 
-Version: 0.0.3
+Version: 0.1.0
 
 A deferred queue enqueues tasks synchronously and executes them asynchronously.
 
-Have you seen the [Redis driver](https://github.com/mranney/node_redis) and the [Express middleware](https://github.com/visionmedia/express)? This is how a deferred queue works. It's a very simplified version of [promises](https://github.com/kriskowal/q).
+Have you seen the [Redis driver](https://github.com/mranney/node_redis)? This is how a deferred queue works.
 
-This module is thought to be the glue between synchronous api calls and asynchronous executions.
+This module is a very lighweight and simplified version of [promises](https://github.com/kriskowal/q). It's thought to be the glue between synchronous api calls and asynchronous executions. Look at the [api](https://github.com/gagle/node-deferred-queue/blob/master/examples/api.js) example to see a representative use case.
+
+This module can be helpful to you if you are exposing an api like the following one:
+
+```javascript
+var Reader = require ("...");
+
+var r = new Reader ("file");
+
+r.read (10, function (error, bytes){
+	if (error) return console.error (error);
+	fn1 (bytes);
+	
+	r.read (20, function (error, bytes){
+		if (error) return console.error (error);
+		fn2 (bytes);
+		
+		r.close (function (error){
+			if (error) return console.error (error);
+			fn3 ();
+		});
+	});
+});
+```
+
+The above example has two problems: the callback nesting and the error handling. With a deferred queue the example can be rewritten as follows:
+
+```javascript
+var Reader = require ("...");
+
+var r = new Reader ("file");
+
+r.on ("error", function (error){
+	console.error (error);
+});
+r.read (10, fn1);
+r.read (20, fn2);
+r.close (fn3);
+```
 
 #### Installation ####
 
 ```
 npm install deferred-queue
 ```
-
-#### Documentation ####
-
-- [Introduction](#introduction)
 
 #### Functions ####
 
@@ -30,151 +64,6 @@ npm install deferred-queue
 #### Objects ####
 
 - [DeferredQueue](#deferredqueue)
-
----
-
-<a name="introduction"></a>
-__Introduction__
-
-Say you want to execute some asynchronous tasks in the following order: A, B, C. You can do:
-
-```javascript
-A (function (){
-	B (function (){
-		C ();
-	});	
-});
-```
-
-Or you can use async:
-
-```javascript
-async.series ([A, B, C], function (){});
-```
-
-Now you want to modify the algorithm and execute D or E depending on the result of C:
-
-```javascript
-A (function (){
-	B (function (){
-		C (function (result){
-			if (result){
-				D ();
-			}else{
-				E ();
-			}
-		});
-	});	
-});
-```
-
-Or with async:
-
-```javascript
-async.series ([
-	A,
-	B,
-	function (cb){
-		C (function (result){
-			if (result){
-				D (cb);
-			}else{
-				E (cb);
-			}
-		});
-	}
-], function (){});
-```
-
-Now you want to repeat the whole process if E returns an error.
-
-```javascript
-var fn = function (){
-	A (function (){
-		B (function (){
-			C (function (result){
-				if (result){
-					D ();
-				}else{
-					E (function (error){
-						if (error) fn ();
-					});
-				}
-			});
-		});	
-	});
-};
-
-fn ();
-```
-
-Or with async:
-
-```javascript
-var fn = function (){
-	async.series ([
-		A,
-		B,
-		function (cb){
-			C (function (result){
-				if (result){
-					D (cb);
-				}else{
-					E (function (error){
-						if (error) fn ();
-						cb ();
-					});
-				}
-			});
-		}
-	], function (){});
-};
-
-fn ();
-```
-
-Have you noticed that if E fails 10 times all the content of `fn` has to be recreated every time? That's very inefficient. 
-What about if A, B, C and D can also return errors? Don't make me write the code.
-
-With a deferred queue you can simply write:
-
-```javascript
-q
-	.on ("error", function (error){
-		//Any error returned by A, B or the anonymous function
-		q.restart ();
-	})
-	.push (A)
-	.push (B)
-	.push (function (cb){
-		C (function (result){
-			if (result){
-				D (cb);
-			}else{
-				E (cb);
-			}
-		});
-	})
-```
-
-The benefits are:
-
-- You don't need to nest calls.
-- The content is created only once. When you call to `restart()` you're just executing the previous tasks again. Well, in fact, in the previous example the anonymous functions that is passed to C is created on each restart but this is because it isn't in the queue, it's not a task. All the functions that are enqueued with `push()` are only created once.
-- When a function is pushed it is added to the queue and tries to execute itself. If there are pending functions that needs to be executed first, it simply waits. You can imagine this as a dynamic queue that can increase in size at any time and is always executing. It is similar to async's [queue](https://github.com/caolan/async#queue) function with concurrency one.
-
-	```javascript
-	q.push (A);
-	q.push (function (){
-		q.push (C);
-		q.push (D);
-	});
-	q.push (B);
-	```
-	
-	If A, B, C, D are asynchronous: A → B → C → D.  
-	If A, B, C, D are synchronous: A → C → D → B.
-- It is very useful when you need to execute some asynchronous tasks with a certain order or you want to expose your asynchronous functions with a synchronous api, like [node-redis](https://github.com/mranney/node_redis) does.
 
 ---
 
@@ -190,14 +79,13 @@ __DeferredQueue__
 
 __Methods__
 
-- [DeferredQueue#pause() : DeferredQueue](#pause)
+- [DeferredQueue#pause() : undefined](#pause)
 - [DeferredQueue#push(task[, callback]) : DeferredQueue](#push)
-- [DeferredQueue#restart() : DeferredQueue](#restart)
-- [DeferredQueue#resume() : DeferredQueue](#resume)
-- [DeferredQueue#stop() : DeferredQueue](#stop)
+- [DeferredQueue#resume() : undefined](#resume)
+- [DeferredQueue#unshift(task[, callback]) : DeferredQueue](#unshift)
 
 <a name="pause"></a>
-__DeferredQueue#pause() : DeferredQueue__
+__DeferredQueue#pause() : undefined__
 
 Pauses the queue execution.
 
@@ -249,16 +137,28 @@ q.push (function (cb){
 });
 ```
 
+There are subtle differences when the tasks are synchronous and asynchronous:
+
+```javascript
+q.push (A);
+q.push (function (){
+	q.push (C);
+	q.push (D);
+});
+q.push (B);
+```
+
+If A, B, C, D are asynchronous: A → B → C → D. [Asynchronous](https://github.com/gagle/node-deferred-queue/blob/master/examples/asynchronous.js) example.  
+If A, B, C, D are synchronous: A → C → D → B. [Synchronous](https://github.com/gagle/node-deferred-queue/blob/master/examples/synchronous.js) example.  
+
 The error is also emitted with an `error` event. The queue is automatically paused, so if you want to resume it you'll need to call to [resume()](#resume).
 
-<a name="restart"></a>
-__DeferredQueue#restart() : DeferredQueue__  
-Restarts the queue execution from the first task.
-
 <a name="resume"></a>
-__DeferredQueue#resume() : DeferredQueue__  
+__DeferredQueue#resume() : undefined__
+
 Resumes the queue execution from the task it was paused.
 
-<a name="stop"></a>
-__DeferredQueue#stop() : DeferredQueue__  
-Stops the queue execution and resets to the first task. It can be executed again with `resume()` or `restart()`.
+<a name="unshift"></a>
+__DeferredQueue#unshift(task[, callback]) : DeferredQueue__
+
+Adds a task to the beginning of the queue. It has the same functionality as the [push()](#push) function.

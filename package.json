@@ -1,8 +1,8 @@
 {
 	"name": "deferred-queue",
-	"version": "0.0.3",
+	"version": "0.1.0",
 	"description": "Asynchronous deferred queue",
-	"keywords": ["asynchronous", "deferred", "queue", "flow", "promises"],
+	"keywords": ["asynchronous", "deferred", "queue", "flow", "promises", "task"],
 	"author": {
 		"name": "Gabriel Llamas",
 		"email": "gagle@outlook.com"
