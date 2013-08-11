@@ -1,3 +1,11 @@
+v0.1.0 (11 Aug 2013)
+	The code has been refactored. As soon as a task is executed it is removed from
+		the queue, therefore, "stop()" and "restart()" are no longer needed.
+		The queue doesn't remember the sequence of tasks, like Express does, because
+		this is not the objective of this module.
+	Removed "stop()" and "restart()".
+	Added "unshift()".
+
 v0.0.3 (10 Aug 2013)
 	Synchronous tasks can be added.
 	The "error" event is emitted after the callback.
