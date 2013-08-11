@@ -2,8 +2,7 @@
 
 var dq = require ("../lib");
 
-var q = dq.create ();
-q
+dq.create ()
 		.on ("error", function (error){
 			console.error (error);
 		})
@@ -11,7 +10,7 @@ q
 			console.log (1);
 		})
 		.push (function (){
-			q.push (function (){
+			this.push (function (){
 				console.log (3);
 			})
 			.push (function (){

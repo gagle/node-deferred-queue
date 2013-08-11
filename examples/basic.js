@@ -19,6 +19,13 @@ dq.create ()
 			//v1 is 1
 			//v2 is 2
 			console.log (v1, v2);
+			
+			//The queue is paused during 1s
+			this.pause ();
+			var me = this;
+			setTimeout (function (){
+				me.resume ();
+			}, 1000);
 		})
 		.push (function (cb){
 			process.nextTick (function (){
