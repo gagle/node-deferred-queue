@@ -47,8 +47,8 @@ Reader.prototype.close = function (){
 		});
 	}, function (error){
 		//If an error occurs we don't want to call the default error handler
-		//because it tries to close the file automatically, so if close fails
-		//there will be infinite calls to close
+		//because it tries to close the file automatically, so if close() fails
+		//there would be infinite calls to close()
 		if (error){
 			this.preventDefault ();
 			me.emit ("error", error);
