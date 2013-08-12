@@ -70,8 +70,7 @@ User.prototype._addTask = function (task, cb){
 	this._queue.push (task, function (error){
 		//Errors are redirected to the error handler, we don't want to pass them to
 		//the possible callback
-		if (error) return;
-		if (cb){
+		if (!error && cb){
 			//Remove the first parameter, the error (null)
 			var args = Array.prototype.slice.call (arguments);
 			args.shift ();
