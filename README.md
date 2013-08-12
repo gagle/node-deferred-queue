@@ -5,7 +5,7 @@ _Node.js project_
 
 #### Asynchronous deferred queue ####
 
-Version: 0.1.0
+Version: 0.1.1
 
 A deferred queue enqueues tasks synchronously and executes them asynchronously.
 
@@ -20,13 +20,13 @@ var Reader = require ("...");
 
 var r = new Reader ("file");
 
-r.read (10, function (error, bytes){
+r.read (10, function (error, bytesRead, buffer){
 	if (error) return console.error (error);
-	fn1 (bytes);
+	fn1 (bytesRead, buffer);
 	
-	r.read (20, function (error, bytes){
+	r.read (20, function (error, bytesRead, buffer){
 		if (error) return console.error (error);
-		fn2 (bytes);
+		fn2 (bytesRead, buffer);
 		
 		r.close (function (error){
 			if (error) return console.error (error);
@@ -46,10 +46,13 @@ var r = new Reader ("file");
 r.on ("error", function (error){
 	console.error (error);
 });
+r.on ("close", fn3);
 r.read (10, fn1);
 r.read (20, fn2);
-r.close (fn3);
+r.close ();
 ```
+
+Look at the [reader](https://github.com/gagle/node-deferred-queue/blob/master/examples/reader.js) example for further details.
 
 #### Installation ####
 
@@ -80,6 +83,7 @@ __DeferredQueue__
 __Methods__
 
 - [DeferredQueue#pause() : undefined](#pause)
+- [DeferredQueue#preventDefault() : undefined](#preventDefault)
 - [DeferredQueue#push(task[, callback]) : DeferredQueue](#push)
 - [DeferredQueue#resume() : undefined](#resume)
 - [DeferredQueue#unshift(task[, callback]) : DeferredQueue](#unshift)
@@ -89,6 +93,11 @@ __DeferredQueue#pause() : undefined__
 
 Pauses the queue execution.
 
+<a name="preventDefault"></a>
+__DeferredQueue#preventDefault() : undefined__
+
+Prevents the propagation of the error to the default error handler.
+
 <a name="push"></a>
 __DeferredQueue#push(task[, callback]) : DeferredQueue__
 
@@ -96,7 +105,7 @@ Adds a task and tries to execute it. If there are pending tasks, the task waits 
 
 The task is what you want to execute. The callback is executed with the result of the task.
 
-If the task is asynchronous you don't need to call any callback, simply return. If you want to return an error, throw it, it will be catched. The value that is returned is passed to the callback.
+If the task is synchronous you don't need to call any callback, simply return a value. If you want to return an error, throw it, it will be catched. The value that is returned is passed to the callback.
 
 ```javascript
 q.push (function (){
@@ -151,7 +160,18 @@ q.push (B);
 If A, B, C, D are asynchronous: A → B → C → D. [Asynchronous](https://github.com/gagle/node-deferred-queue/blob/master/examples/asynchronous.js) example.  
 If A, B, C, D are synchronous: A → C → D → B. [Synchronous](https://github.com/gagle/node-deferred-queue/blob/master/examples/synchronous.js) example.  
 
-The error is also emitted with an `error` event. The queue is automatically paused, so if you want to resume it you'll need to call to [resume()](#resume).
+The error is also emitted with an `error` event. The queue is automatically paused, so if you want to resume it you'll need to call to [resume()](#resume). If you don't want to propagate the error to the default error handler call to the [preventDefault()](#preventdefault) function from inside the callback:
+
+```javascript
+q.on ("error", function (error){
+	//This function is not executed
+})
+q.push (function (cb){
+	cb (new Error ("error"));
+}, function (error){
+	if (error) this.preventDefault ();
+});
+```
 
 <a name="resume"></a>
 __DeferredQueue#resume() : undefined__

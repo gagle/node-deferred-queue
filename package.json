@@ -1,6 +1,6 @@
 {
 	"name": "deferred-queue",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Asynchronous deferred queue",
 	"keywords": ["asynchronous", "deferred", "queue", "flow", "promises", "task"],
 	"author": {

@@ -1,3 +1,7 @@
+v0.1.1 (12 Aug 2013)
+	Added "preventDefault()". When used from inside the result callback, the
+		default error handler is not called.
+	
 v0.1.0 (11 Aug 2013)
 	The code has been refactored. As soon as a task is executed it is removed from
 		the queue, therefore, "stop()" and "restart()" are no longer needed.

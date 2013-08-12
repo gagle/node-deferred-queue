@@ -45,8 +45,8 @@ Client.prototype.disconnect = function (){
 var init = function (client){
 	this._client = client;
 	var me = this;
-	this._queue = dq.create ();
-	this._queue.on ("error", function (error){
+	this._q = dq.create ();
+	this._q.on ("error", function (error){
 		me._client.emit ("error", error);
 	});
 };
@@ -66,71 +66,69 @@ var User = function (client){
 
 Client.prototype.User = User;
 
-User.prototype._addTask = function (task, cb){
-	this._queue.push (task, function (error){
-		//Errors are redirected to the error handler, we don't want to pass them to
-		//the possible callback
-		if (!error && cb){
-			//Remove the first parameter, the error (null)
-			var args = Array.prototype.slice.call (arguments);
-			args.shift ();
-			cb.apply (null, args);
-		}
-	});
-};
-
 User.prototype.create = function (u, cb){
-	this._addTask (function (cb){
+	this._q.push (function (done){
 		//Simulates a database insert()
 		process.nextTick (function (){
 			users.push (u);
-			cb ();
+			done ();
 		});
-	}, cb);
+	}, function (error){
+		if (!error && cb) cb ();
+	});
 	return this;
 };
 
 User.prototype.read = function (u, cb){
-	this._addTask (function (cb){
+	this._q.push (function (done){
 		//Simulates a database find()
 		process.nextTick (function (){
 			for (var i=0, len=users.length; i<len; i++){
-				if (users[i].name === u.name) return cb (null, users[i]);
+				if (users[i].name === u.name) return done (null, users[i]);
 			}
+			done (null, null);
 		});
-	}, cb);
+	}, function (error, data){
+		if (!error && cb) cb (data);
+	});
 	return this;
 };
 
 User.prototype.update = function (u, args, cb){
-	this._addTask (function (cb){
+	this._q.push (function (done){
 		//Simulates a database update()
 		process.nextTick (function (){
 			for (var i=0, len=users.length; i<len; i++){
 				if (users[i].name === u.name){
 					for (var p in args){
 						users[i][p] = args[p];
-						return cb ();
+						return done ();
 					}
 				}
 			}
+			done (new Error ("User not found"));
 		});
-	}, cb);
+	}, function (error){
+		if (!error && cb) cb ();
+	});
 	return this;
 };
 
 User.prototype.remove = function (u, cb){
-	this._addTask (function (cb){
+	this._q.push (function (done){
 		//Simulates a database remove()
 		process.nextTick (function (){
 			for (var i=0, len=users.length; i<len; i++){
 				if (users[i].name === u.name){
 					users.splice (i, 1);
-					return cb ();
+					return done ();
 				}
 			}
+			done (new Error ("User not found"));
 		});
-	}, cb);
+	}, function (error){
+		if (!error && cb) cb ();
+	});
 	return this;
 };
 
