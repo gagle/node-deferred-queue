@@ -5,6 +5,11 @@ var util = require ("util");
 var fs = require ("fs");
 var dq = require ("../lib");
 
+/*
+The basic idea for wrapping asynchronous functions is to execute the original
+code from inside a task.
+*/
+
 var Reader = function (path){
 	events.EventEmitter.call (this);
 	this._path = path;
@@ -13,7 +18,9 @@ var Reader = function (path){
 	this._q = dq.create ();
 	this._q.on ("error", function (error){
 		//Forward the queue error event to the reader error handler
-		me.close (function (){
+		if (!me._fd) return me.emit ("error", error);
+		fs.close (me._fd, function (){
+			//The close error is ignored
 			me.emit ("error", error);
 		});
 	});
@@ -53,11 +60,10 @@ Reader.prototype.close = function (){
 
 Reader.prototype.read = function (bytes, cb){
 	var me = this;
-	var buffer = new Buffer (bytes);
 	
 	this._q.push (function (done){
 		var read = function (){
-			fs.read (me._fd, buffer, 0, bytes, null,
+			fs.read (me._fd, new Buffer (bytes), 0, bytes, null,
 					function (error, bytesRead, buffer){
 				if (error) return done (error);
 				done (null, bytesRead, buffer.slice (0, bytesRead));
