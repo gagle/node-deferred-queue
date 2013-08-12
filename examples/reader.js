@@ -93,3 +93,9 @@ new Reader ("reader.js")
 			console.log (buffer);
 		})
 		.close ();
+
+/*
+<Buffer 22 75 73 65 20 73 74 72 69 63>
+<Buffer 74 22 3b 0d 0a 0d 0a 76 61 72 20 65 76 65 6e 74 73 20 3d 20>
+closed
+*/
