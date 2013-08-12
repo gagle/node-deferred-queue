@@ -162,13 +162,13 @@ c.on ("connect", function (){
 			.create ({ name: "Maria", age: 23 })
 			.create ({ name: "Paul", age: 10 })
 			.read ({ name: "Maria" }, function (data){
-				console.log ("Maria: " + util.inspect (data, null, true));
+				console.log ("Maria: " + util.inspect (data, { depth: null }));
 				//{ name: "Maria", age: 23 }
 			})
 			.update ({ name: "Paul" }, { location: "Spain" }, function (){
 				//Task executed after "remove()"
 				u.read ({ name: "Paul" }, function (data){
-					console.log ("Paul: " + util.inspect (data, null, true));
+					console.log ("Paul: " + util.inspect (data, { depth: null }));
 					//{ name: "Paul", age: 10, location: "Spain" }
 					
 					c.disconnect ();
@@ -178,7 +178,7 @@ c.on ("connect", function (){
 });
 
 c.on ("disconnect", function (){
-	console.log ("Users: " + util.inspect (users, null, true));
+	console.log ("Users: " + util.inspect (users, { depth: null }));
 });
 
 /*
