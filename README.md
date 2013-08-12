@@ -11,7 +11,7 @@ A deferred queue enqueues tasks synchronously and executes them asynchronously.
 
 Have you seen the [Redis driver](https://github.com/mranney/node_redis)? This is how a deferred queue works.
 
-This module is a very lighweight and simplified version of [promises](https://github.com/kriskowal/q). It's thought to be the glue between synchronous api calls and asynchronous executions. Look at the [api](https://github.com/gagle/node-deferred-queue/blob/master/examples/api.js) example to see a representative use case.
+This module is a very lighweight and simplified version of [promises](https://github.com/kriskowal/q). It's meant to be the glue between synchronous api calls and asynchronous executions. Look at the [api](https://github.com/gagle/node-deferred-queue/blob/master/examples/api.js) example to see a representative use case.
 
 This module can be helpful to you if you are exposing an api like the following one:
 
