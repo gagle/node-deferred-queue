@@ -43,6 +43,7 @@ Reader.prototype.close = function (){
 	this._q.push (function (done){
 		if (!me._fd) return done ();
 		fs.close (me._fd, function (error){
+			me._fd = null;
 			done (error);
 		});
 	}, function (error){
