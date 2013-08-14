@@ -86,7 +86,7 @@ Reader.prototype.read = function (bytes, cb){
 	return this;
 };
 
-new Reader ("reader.js")
+new Reader (__filename)
 		.on ("error", function (error){
 			console.error (error);
 		})
