@@ -16,8 +16,6 @@ This module is a very lighweight and simplified version of [promises](https://gi
 This module can be helpful to you if you are exposing an api like the following one:
 
 ```javascript
-var Reader = require ("...");
-
 var r = new Reader ("file");
 
 r.read (10, function (error, bytesRead, buffer){
@@ -39,8 +37,6 @@ r.read (10, function (error, bytesRead, buffer){
 The above example has two problems: the callback nesting and the error handling. With a deferred queue the example can be rewritten as follows:
 
 ```javascript
-var Reader = require ("...");
-
 var r = new Reader ("file");
 
 r.on ("error", function (error){
