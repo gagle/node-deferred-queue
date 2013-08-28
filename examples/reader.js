@@ -88,11 +88,11 @@ Reader.prototype.close = function (){
 	});
 };
 
-Reader.prototype._read = function (bytes, done){
+Reader.prototype._read = function (bytes, cb){
 	fs.read (this._fd, new Buffer (bytes), 0, bytes, null,
 			function (error, bytesRead, buffer){
-		if (error) return done (error);
-		done (null, bytesRead, buffer.slice (0, bytesRead));
+		if (error) return cb (error);
+		cb (null, bytesRead, buffer.slice (0, bytesRead));
 	});
 };
 
