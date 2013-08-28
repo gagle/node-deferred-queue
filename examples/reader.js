@@ -50,7 +50,7 @@ Reader.prototype.close = function (){
 	
 	if (this._cb){
 		//The function is called inside the callback of an operation, close the
-		//file immediately
+		//file immediately and cancel the remaining tasks
 		this._q.pause ();
 		if (!this._fd){
 			this._q = null;
