@@ -12,15 +12,23 @@ code from inside a task.
 
 var Reader = function (path){
 	events.EventEmitter.call (this);
+	
 	this._path = path;
 	this._fd = null;
+	this._cb = false;
+	
 	var me = this;
 	this._q = dq.create ();
 	this._q.on ("error", function (error){
 		//Forward the queue error event to the reader error handler
-		if (!me._fd) return me.emit ("error", error);
+		if (!me._fd){
+			me._q = null;
+			return me.emit ("error", error);
+		}
 		fs.close (me._fd, function (){
 			//The close error is ignored
+			me._fd = null;
+			me._q = null;
 			me.emit ("error", error);
 		});
 	});
@@ -40,16 +48,37 @@ Reader.prototype._open = function (cb){
 Reader.prototype.close = function (){
 	var me = this;
 	
+	if (this._cb){
+		//The function is called inside the callback of an operation, close the
+		//file immediately
+		this._q.pause ();
+		if (!this._fd){
+			this._q = null;
+			return this.emit ("close");
+		}
+		fs.close (this._fd, function (error){
+			if (error) return me.emit ("error", error);
+			me._fd = null;
+			me._q = null;
+			me.emit ("close");
+		});
+		return;
+	}
+	
 	this._q.push (function (done){
-		if (!me._fd) return done ();
+		if (!me._fd){
+			me._q = null;
+			return done ();
+		}
 		fs.close (me._fd, function (error){
 			me._fd = null;
+			me._q = null;
 			done (error);
 		});
 	}, function (error){
-		//If an error occurs we don't want to call the default error handler
-		//because it tries to close the file automatically, so if close() fails
-		//there would be infinite calls to close()
+		//If an error occurs the default error handler is not called because it
+		//tries to close the file automatically, so if close() fails there would be
+		//infinite calls to close()
 		if (error){
 			this.preventDefault ();
 			me.emit ("error", error);
@@ -80,7 +109,11 @@ Reader.prototype.read = function (bytes, cb){
 			me._read (bytes, done);
 		}
 	}, function (error, bytesRead, buffer){
-		if (!error) cb (bytesRead, buffer);
+		if (!error){
+			me._cb = true;
+			cb (bytesRead, buffer);
+			me._cb = false;
+		}
 	});
 	
 	return this;
