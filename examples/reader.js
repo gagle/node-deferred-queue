@@ -59,25 +59,25 @@ Reader.prototype.close = function (){
 	});
 };
 
+Reader.prototype._read = function (bytes, done){
+	fs.read (this._fd, new Buffer (bytes), 0, bytes, null,
+			function (error, bytesRead, buffer){
+		if (error) return done (error);
+		done (null, bytesRead, buffer.slice (0, bytesRead));
+	});
+};
+
 Reader.prototype.read = function (bytes, cb){
 	var me = this;
 	
 	this._q.push (function (done){
-		var read = function (){
-			fs.read (me._fd, new Buffer (bytes), 0, bytes, null,
-					function (error, bytesRead, buffer){
-				if (error) return done (error);
-				done (null, bytesRead, buffer.slice (0, bytesRead));
-			});
-		};
-	
 		if (!me._fd){
 			me._open (function (error){
 				if (error) return done (error);
-				read ();
+				me._read (bytes, done);
 			});
 		}else{
-			read ();
+			me._read (bytes, done);
 		}
 	}, function (error, bytesRead, buffer){
 		if (!error) cb (bytesRead, buffer);
