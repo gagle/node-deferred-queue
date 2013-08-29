@@ -48,23 +48,6 @@ Reader.prototype._open = function (cb){
 Reader.prototype.close = function (){
 	var me = this;
 	
-	if (this._cb){
-		//The function is called inside the callback of an operation, close the
-		//file immediately and cancel the remaining tasks
-		this._q.pause ();
-		if (!this._fd){
-			this._q = null;
-			return this.emit ("close");
-		}
-		fs.close (this._fd, function (error){
-			if (error) return me.emit ("error", error);
-			me._fd = null;
-			me._q = null;
-			me.emit ("close");
-		});
-		return;
-	}
-	
 	this._q.push (function (done){
 		if (!me._fd){
 			me._q = null;
@@ -109,11 +92,7 @@ Reader.prototype.read = function (bytes, cb){
 			me._read (bytes, done);
 		}
 	}, function (error, bytesRead, buffer){
-		if (!error){
-			me._cb = true;
-			cb (bytesRead, buffer);
-			me._cb = false;
-		}
+		if (!error)cb (bytesRead, buffer);
 	});
 	
 	return this;
