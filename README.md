@@ -48,7 +48,7 @@ r.read (20, fn2);
 r.close ();
 ```
 
-Look at the [reader](https://github.com/gagle/node-deferred-queue/blob/master/examples/reader.js) example for further details.
+Look at the [reader](https://github.com/gagle/node-deferred-queue/blob/master/examples/reader.js) example for further details. The [binary-reader](https://github.com/gagle/node-binary-reader) module is a real example which is based on this reader.
 
 #### Installation ####
 
