@@ -69,6 +69,8 @@ Reader.prototype.close = function (){
 			me.emit ("close");
 		}
 	});
+	
+	return this;
 };
 
 Reader.prototype._read = function (bytes, cb){
