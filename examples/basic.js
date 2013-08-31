@@ -47,7 +47,7 @@ dq.create ()
 				cb (new Error ("error"));
 			});
 		}, function (error){
-			//The error is first passed to this function and then is emitted to the
+			//The error is first passed to this function and then is forwarded to the
 			//error handler
 			//Here you typically want to check if an error occurred and perform some
 			//clean up tasks
