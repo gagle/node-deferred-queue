@@ -7,7 +7,7 @@ _Node.js project_
 
 Version: 0.2.0
 
-This module brings to you a very lighweight control flow mechanism that it's meant to be used as the interface between the user synchronous calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous api which tends to create the callback pyramid of doom, a deferred queue may help you.
+This module brings to you a very lighweight control flow mechanism that it's meant to be used as the interface between the user synchronous calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous api which tends to create the callback pyramid of doom, a deferred queue may help you. It can be also used with any built-in function.
 
 Have you seen the [Redis driver](https://github.com/mranney/node_redis)? This is how a deferred queue works.
 
