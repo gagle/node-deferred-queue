@@ -5,37 +5,37 @@ var dq = require ("../lib");
 dq.create ()
 		.on ("error", function (error){
 			//This function is executed when any task fails
-			//Here you typically want to log the error
+			//Here you typically log the error
 			console.error (error);
 		})
 		.push (function (cb){
-			//Simuates an asynchronous task
+			//Asynchronous task
 			process.nextTick (function (){
 				//The first parameter is the error
 				cb (null, 1, 2);
 			});
 		}, function (error, v1, v2){
-			//This function is executed with the result of the task
+			//This function is executed after the previous task and before the next
+			//task
 			//v1 is 1
 			//v2 is 2
 			console.log (v1, v2);
 			
-			//The queue is paused during 1s
+			//The queue is paused 1s
 			this.pause ();
 			var me = this;
 			setTimeout (function (){
 				me.resume ();
 			}, 1000);
 		})
-		.push (function (cb){
-			process.nextTick (function (){
-				cb (null, 5, 6);
-			});
-		}, function (error, v1, v2){
-			console.log (v1, v2);
+		.push (function (){
+			//Synchronous task
+			return 5;
+		}, function (error, v1){
+			console.log (v1);
 		})
 		.unshift (function (cb){
-			//The task is added to the beginning of the array
+			//The task is added to the beginning of the queue
 			process.nextTick (function (){
 				cb (null, 3, 4);
 			});
@@ -49,10 +49,8 @@ dq.create ()
 		}, function (error){
 			//The error is first passed to this function and then is forwarded to the
 			//error handler
-			//Here you typically want to check if an error occurred and perform some
-			//clean up tasks
 			if (error){
-				//...
+				//Here you typically do clean up tasks
 			}
 		})
 		.push (function (){
@@ -63,6 +61,6 @@ dq.create ()
 /*
 1 2
 3 4
-5 6
+5
 [Error: error]
 */

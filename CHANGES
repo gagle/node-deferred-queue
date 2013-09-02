@@ -1,3 +1,9 @@
+v0.2.0 (2 Sep 2013)
+	The code has been refactored, it was failing with synchronous codes when
+		pause() and resume() were called.
+	When an error occurs the queue cannot be resumed.
+	Added "pending()".
+
 v0.1.1 (12 Aug 2013)
 	Added "preventDefault()". When used from inside the result callback, the
 		default error handler is not called.

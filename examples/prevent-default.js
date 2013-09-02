@@ -6,7 +6,6 @@ dq.create ()
 		.on ("error", function (error){
 			//This function is never executed because preventDefault() was called
 			console.error (error);
-			this.resume ();
 		})
 		.push (function (cb){
 			process.nextTick (function (){
