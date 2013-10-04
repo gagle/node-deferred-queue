@@ -17,18 +17,18 @@ For example, suppose you have an api like the following one:
 var r = new Reader ("file");
 
 r.read (10, function (error, bytesRead, buffer){
-	if (error) return console.error (error);
-	fn1 (bytesRead, buffer);
-	
-	r.read (20, function (error, bytesRead, buffer){
-		if (error) return console.error (error);
-		fn2 (bytesRead, buffer);
-		
-		r.close (function (error){
-			if (error) return console.error (error);
-			fn3 ();
-		});
-	});
+  if (error) return console.error (error);
+  fn1 (bytesRead, buffer);
+  
+  r.read (20, function (error, bytesRead, buffer){
+    if (error) return console.error (error);
+    fn2 (bytesRead, buffer);
+    
+    r.close (function (error){
+      if (error) return console.error (error);
+      fn3 ();
+    });
+  });
 });
 ```
 
@@ -90,12 +90,12 @@ Pauses the queue. It should be used inside the callback of the `push()` or `unsh
 
 ```javascript
 dq.create ()
-		.push (function (){
-			//Task
-		}, function (){
-			//Callback
-			this.pause ();
-		});
+    .push (function (){
+      //Task
+    }, function (){
+      //Callback
+      this.pause ();
+    });
 ```
 
 <a name="pending"></a>
@@ -110,14 +110,14 @@ Prevents the propagation of the error to the default error handler. If an error 
 
 ```javascript
 dq.create ()
-		.push (function (){
-			//Task
-		}, function (error){
-			//Callback
-			if (error){
-				this.preventDefault ();
-			}
-		});
+    .push (function (){
+      //Task
+    }, function (error){
+      //Callback
+      if (error){
+        this.preventDefault ();
+      }
+    });
 ```
 
 <a name="push"></a>
@@ -131,19 +131,19 @@ If the task is synchronous you don't need to call any callback, simply return a 
 
 ```javascript
 q.push (function (){
-	return 1;
+  return 1;
 }, function (error, value){
-	//error is null
-	//value is 1
+  //error is null
+  //value is 1
 });
 ```
 
 ```javascript
 q.push (function (){
-	throw 1;
+  throw 1;
 }, function (error, value){
-	//error is 1
-	//value is undefined
+  //error is 1
+  //value is undefined
 });
 ```
 
@@ -151,20 +151,20 @@ If the task is asynchronous, a function is passed as parameter. As usual, the er
 
 ```javascript
 q.push (function (cb){
-	cb (null, 1, 2);
+  cb (null, 1, 2);
 }, function (error, v1, v2){
-	//error is null
-	//v1 is 1
-	//v2 is 2
+  //error is null
+  //v1 is 1
+  //v2 is 2
 });
 ```
 
 ```javascript
 q.push (function (cb){
-	cb (1);
+  cb (1);
 }, function (error, v1, v2){
-	//error is 1
-	//v1 and v2 are undefined
+  //error is 1
+  //v1 and v2 are undefined
 });
 ```
 
@@ -173,8 +173,8 @@ There are subtle differences when the tasks are synchronous and asynchronous:
 ```javascript
 q.push (A);
 q.push (function (){
-	q.push (C);
-	q.push (D);
+  q.push (C);
+  q.push (D);
 });
 q.push (B);
 ```
@@ -186,12 +186,12 @@ The error is also emitted with an `error` event. The queue is automatically paus
 
 ```javascript
 q.on ("error", function (error){
-	//This function is not executed
+  //This function is not executed
 })
 q.push (function (cb){
-	cb (new Error ("error"));
+  cb (new Error ("error"));
 }, function (error){
-	if (error) this.preventDefault ();
+  if (error) this.preventDefault ();
 });
 ```
 
@@ -202,17 +202,17 @@ Resumes the queue from the next task it was paused. It should be used inside the
 
 ```javascript
 dq.create ()
-		.push (function (){
-			//Task
-		}, function (){
-			//Callback
-			this.pause ();
-			var me = this;
-			foo (function (error){
-				if (error) return console.error (error);
-				me.resume ();
-			});
-		});
+    .push (function (){
+      //Task
+    }, function (){
+      //Callback
+      this.pause ();
+      var me = this;
+      foo (function (error){
+        if (error) return console.error (error);
+        me.resume ();
+      });
+    });
 ```
 
 <a name="unshift"></a>
