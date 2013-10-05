@@ -2,7 +2,7 @@
 
 var dq = require ("../lib");
 
-dq.create ()
+dq ()
 		.on ("error", function (error){
 			console.error (error);
 		})

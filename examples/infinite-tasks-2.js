@@ -2,7 +2,7 @@
 
 var dq = require ("../lib");
 
-var q = dq.create ();
+var q = dq ();
 
 (function push (i){
 	q.push (function (){

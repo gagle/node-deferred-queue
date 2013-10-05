@@ -45,7 +45,7 @@ Client.prototype.disconnect = function (){
 var init = function (client){
 	this._client = client;
 	var me = this;
-	this._q = dq.create ();
+	this._q = dq ();
 	this._q.on ("error", function (error){
 		me._client.emit ("error", error);
 	});

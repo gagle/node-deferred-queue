@@ -1,7 +1,7 @@
 var dq = require ("../lib");
 var fs = require ("fs");
 
-dq.create ()
+dq ()
 		.on ("error", function (error){
 			console.log (error);
 		})

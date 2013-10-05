@@ -5,7 +5,7 @@ _Node.js project_
 
 #### Asynchronous deferred queue ####
 
-Version: 0.2.0
+Version: 0.3.0
 
 This module brings to you a very lighweight control flow mechanism that it's meant to be used as the interface between the user synchronous calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous api which tends to create the callback pyramid of doom, a deferred queue may help you. It can be also used with any built-in function.
 
@@ -56,7 +56,7 @@ npm install deferred-queue
 
 #### Functions ####
 
-- [_module_.create() : DeferredQueue](#create)
+- [_module_() : DeferredQueue](#create)
 
 #### Objects ####
 
@@ -65,9 +65,14 @@ npm install deferred-queue
 ---
 
 <a name="create"></a>
-___module_.create() : DeferredQueue__
+___module_.() : DeferredQueue__
 
 Creates a new `DeferredQueue`.
+
+```javascript
+var dq = require ("deferred-queue");
+var q = dq ();
+```
 
 ---
 

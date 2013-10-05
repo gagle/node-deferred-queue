@@ -21,14 +21,12 @@ dq.create ()
 			
 			var me = this;
 			foo (function (error){
-				//If an error occurs you typically want to stop the queue and let the
-				//virtual machine to garbage collect it
-				//It was paused before so the queue is already stopped
+				//Note that the queue is already paused
 				if (error) return console.error (error);
 				
 				console.log (2);
 				
-				//If no error proceed
+				//If no error continue
 				me.resume ();
 			});
 		})

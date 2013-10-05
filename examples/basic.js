@@ -2,7 +2,7 @@
 
 var dq = require ("../lib");
 
-dq.create ()
+dq ()
 		.on ("error", function (error){
 			//This function is executed when any task fails
 			//Here you typically log the error

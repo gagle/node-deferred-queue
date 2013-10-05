@@ -2,7 +2,7 @@
 
 var dq = require ("../lib");
 
-dq.create ()
+dq ()
 		.on ("error", function (error){
 			//This function is never executed because preventDefault() was called
 			console.error (error);
