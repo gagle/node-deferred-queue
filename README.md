@@ -94,7 +94,7 @@ __DeferredQueue#pause() : undefined__
 Pauses the queue. It should be used inside the callback of the `push()` or `unshift()` functions.
 
 ```javascript
-dq.create ()
+q
     .push (function (){
       //Task
     }, function (){
@@ -114,7 +114,7 @@ __DeferredQueue#preventDefault() : undefined__
 Prevents the propagation of the error to the default error handler. If an error occurs no `error` event is emitted. It should be used inside the callback of the `push()` or `unshift()` functions.
 
 ```javascript
-dq.create ()
+q
     .push (function (){
       //Task
     }, function (error){
@@ -206,7 +206,7 @@ __DeferredQueue#resume() : undefined__
 Resumes the queue from the next task it was paused. It should be used inside the callback of the `push()` or `unshift()` functions.
 
 ```javascript
-dq.create ()
+q
     .push (function (){
       //Task
     }, function (){
