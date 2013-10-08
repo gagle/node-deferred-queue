@@ -50,7 +50,7 @@ Look at the [reader](https://github.com/gagle/node-deferred-queue/blob/master/ex
 
 __Projects using this library:__
 
-- [binary-reader](https://github.com/gagle/node-binary-reader): A real example of the previous example.
+- [binary-reader](https://github.com/gagle/node-binary-reader): A real project based on the previous example.
 - [seraphim](https://github.com/gagle/node-seraphim): Configuration management made easy.
 
 #### Installation ####
