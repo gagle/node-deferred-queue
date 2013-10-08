@@ -46,7 +46,12 @@ r.read (20, fn2);
 r.close ();
 ```
 
-Look at the [reader](https://github.com/gagle/node-deferred-queue/blob/master/examples/reader.js) example for further details. The [binary-reader](https://github.com/gagle/node-binary-reader) module is a real example which is based on this reader.
+Look at the [reader](https://github.com/gagle/node-deferred-queue/blob/master/examples/reader.js) example for further details.
+
+__Projects using this library:__
+
+- [binary-reader](https://github.com/gagle/node-binary-reader): A real example of the previous example.
+- [seraphim](https://github.com/gagle/node-seraphim): Configuration management made easy.
 
 #### Installation ####
 

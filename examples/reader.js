@@ -18,8 +18,7 @@ var Reader = function (path){
 	this._cb = false;
 	
 	var me = this;
-	this._q = dq ();
-	this._q.on ("error", function (error){
+	this._q = dq ().on ("error", function (error){
 		//Forward the queue error event to the reader error handler
 		if (!me._fd){
 			me._q = null;
