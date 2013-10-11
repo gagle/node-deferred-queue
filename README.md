@@ -5,7 +5,7 @@ _Node.js project_
 
 #### Fastest series control flow library ####
 
-Version: 0.4.0
+Version: 0.5.0
 
 This module brings to you a very lighweight control flow mechanism that it's meant to be the glue between the user calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous api which tends to create the callback pyramid of doom, a deferred queue may help you. It can also be used as a standalone module.
 
@@ -172,11 +172,26 @@ __DeferredQueue__
 
 __Methods__
 
+- [DeferredQueue#pause() : undefined](#pause)
 - [DeferredQueue#pending() : Number](#pending)
 - [DeferredQueue#preventDefault() : undefined](#preventDefault)
 - [DeferredQueue#push(task[, result]) : DeferredQueue](#push)
-- [DeferredQueue#stop() : undefined](#stop)
+- [DeferredQueue#resume() : undefined](#resume)
 - [DeferredQueue#unshift(task[, result]) : DeferredQueue](#unshift)
+
+<a name="pause"></a>
+__DeferredQueue#pause() : undefined__
+
+Pauses the queue.
+
+```javascript
+q.push (function (){
+	//Task
+}, function (){
+	//Result
+	this.pause ();
+});
+```
 
 <a name="pending"></a>
 __DeferredQueue#pending() : Number__
@@ -189,15 +204,14 @@ __DeferredQueue#preventDefault() : undefined__
 Prevents the propagation of the error, that is, the `error` event is not emitted. It must be used from inside the callback parameter of the [push()](#push) and [unshift()](#unshift) functions.
 
 ```javascript
-q
-    .push (function (){
-      //Task
-    }, function (error){
-      //Callback
-      if (error){
-        this.preventDefault ();
-      }
-    });
+q.push (function (){
+	//Task
+}, function (error){
+	//Callback
+	if (error){
+		this.preventDefault ();
+	}
+});
 ```
 
 <a name="push"></a>
@@ -300,10 +314,10 @@ q.push (function (){
 });
 ```
 
-<a name="stop"></a>
-__DeferredQueue#stop() : undefined__
+<a name="resume"></a>
+__DeferredQueue#resume() : undefined__
 
-Stops the queue execution. Look at the [stop.js](https://github.com/gagle/node-deferred-queue/blob/master/examples/stop.js) example for further details.
+Resumes the queue execution. Look at the [async-function-between-tasks.js](https://github.com/gagle/node-deferred-queue/blob/master/examples/async-function-between-tasks.js) example for further details.
 
 <a name="unshift"></a>
 __DeferredQueue#unshift(task[, result]) : DeferredQueue__

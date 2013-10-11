@@ -12,13 +12,22 @@ dq ()
 		})
 		.push (function (){
 			console.log (1);
-		}, function (error, cb){
+		}, function (error){
+			//Since this callback doesn't have any error handling mechanism, ie.
+			//cannot pass an error to a cb parameter, if you want to execute an
+			//asynchronous function between 2 tasks, you have to pause the queue
+			//and when the function returns resume it again
+			this.pause ();
+			
+			var me = this;
 			async (function (error){
-				if (error) return cb (error);
+				//Note that the queue is already paused
+				if (error) return console.error (error);
 				
 				console.log (2);
 				
-				cb ();
+				//If no error continue
+				me.resume ();
 			});
 		})
 		.push (function (){

@@ -14,13 +14,17 @@ dq ()
 				//The first parameter is the error
 				cb (null, 1, 2);
 			});
-		}, function (error, v1, v2, cb){
+		}, function (error, v1, v2){
 			//v1 is 1
 			//v2 is 2
 			console.log (v1, v2);
 			
 			//Wait 1s
-			setTimeout (cb, 1000);
+			var me = this;
+			this.pause ();
+			setTimeout (function (){
+				me.resume ();
+			}, 1000);
 		})
 		.push (function (){
 			//Synchronous task

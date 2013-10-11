@@ -53,12 +53,14 @@ var tests = {
 				.push (function (){
 					arr.push (5);
 					return 3;
-				}, function (error, v, cb){
+				}, function (error, v){
 					assert.ok (!error);
 					assert.strictEqual (v, 3);
+					var me = this;
+					this.pause ();
 					(function (){
 						arr.push (6);
-						cb ();
+						me.resume ();
 					})();
 				})
 				.push (function (){
@@ -90,19 +92,8 @@ var tests = {
 					arr.push (2);
 					this.preventDefault ();
 				});
-		dq ()
-				.on ("error", function (error){
-					assert.ok (error);
-					arr.push (3);
-				})
-				.push (function (){}, function (error, cb){
-					assert.ok (!error);
-					(function (){
-						cb (new Error ());
-					})();
-				});
 		
-		assert.deepEqual (arr, [1, 2, 3]);
+		assert.deepEqual (arr, [1, 2]);
 	},
 	"asynchronous, push": function (done){
 		var arr = [];
@@ -183,14 +174,16 @@ var tests = {
 						arr.push (3);
 						cb (null, 2, 3, 4);
 					});
-				}, function (error, v2, v3, v4, cb){
+				}, function (error, v2, v3, v4){
 					assert.ok (!error);
 					assert.strictEqual (v2, 2);
 					assert.strictEqual (v3, 3);
 					assert.strictEqual (v4, 4);
+					var me = this;
+					this.pause ();
 					process.nextTick (function (){
 						arr.push (4);
-						cb ();
+						me.resume ();
 					});
 				})
 				.push (function (cb){
@@ -198,11 +191,13 @@ var tests = {
 						arr.push (5);
 						cb ();
 					});
-				}, function (error, cb){
+				}, function (error){
 					assert.ok (!error);
+					var me = this;
+					this.pause ();
 					process.nextTick (function (){
 						arr.push (6);
-						cb ();
+						me.resume ();
 					});
 				})
 				.push (function (){
@@ -214,7 +209,7 @@ var tests = {
 				});
 	},
 	"asynchronous, callback, error": function (done){
-		var pending = 3;
+		var pending = 2;
 		var finish = function (){
 			if (!--pending) done ();
 		};
@@ -238,17 +233,6 @@ var tests = {
 					assert.ok (error);
 					this.preventDefault ();
 					finish ();
-				});
-		dq ()
-				.on ("error", function (error){
-					assert.ok (error);
-					finish ();
-				})
-				.push (function (){}, function (error, cb){
-					assert.ok (!error);
-					process.nextTick (function (){
-						cb (new Error ());
-					});
 				});
 	},
 	"push and unshift, synchronous": function (){
@@ -351,7 +335,7 @@ var tests = {
 					});
 				});
 	},
-	"stop, asynchronous": function (done){
+	"pause, asynchronous": function (done){
 		dq ()
 				.on ("error", function (error){
 					assert.ifError (error);
@@ -362,7 +346,7 @@ var tests = {
 				.push (function (cb){
 					process.nextTick (cb);
 				}, function (){
-					this.stop ();
+					this.pause ();
 					done ();
 				})
 				.push (function (cb){
@@ -370,7 +354,7 @@ var tests = {
 					process.nextTick (cb);
 				});
 	},
-	"stop, asynchronous, inside task": function (done){
+	"pause, asynchronous, inside task": function (done){
 		dq ()
 				.on ("error", function (error){
 					assert.ifError (error);
@@ -379,7 +363,7 @@ var tests = {
 					process.nextTick (cb);
 				})
 				.push (function (cb){
-					this.stop ();
+					this.pause ();
 					cb ();
 					done ();
 				})
@@ -388,27 +372,27 @@ var tests = {
 					process.nextTick (cb);
 				});
 	},
-	"stop, synchronous": function (){
+	"pause, synchronous": function (){
 		dq ()
 				.on ("error", function (error){
 					assert.ifError (error);
 				})
 				.push (function (){})
 				.push (function (){}, function (){
-					this.stop ();
+					this.pause ();
 				})
 				.push (function (){
 					assert.fail ();
 				});
 	},
-	"stop, synchronous inside task": function (){
+	"pause, inside task": function (){
 		dq ()
 				.on ("error", function (error){
 					assert.ifError (error);
 				})
 				.push (function (){})
 				.push (function (){
-					this.stop ();
+					this.pause ();
 				})
 				.push (function (){
 					assert.fail ();
