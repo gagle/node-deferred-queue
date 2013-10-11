@@ -1,5 +1,6 @@
 v0.4.0 (11 Oct 2013)
 	Removed "pause()" and "resume()" in favor of a callback.
+	Added "stop()".
 	Minor improvements.
 
 v0.3.0 (05 Oct 2013)

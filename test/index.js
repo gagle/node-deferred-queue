@@ -326,7 +326,7 @@ var tests = {
 					});
 				});
 	},
-	"push inside result, asynchronous": function (cb){
+	"push inside result, asynchronous": function (outerCb){
 		var arr = [];
 		dq ()
 				.on ("error", function (error){
@@ -344,11 +344,74 @@ var tests = {
 								me.push (function (){
 									arr.push (3);
 									assert.deepEqual (arr, [1, 2, 3]);
-									cb ();
+									outerCb ();
 								});
 							});
 						});
 					});
+				});
+	},
+	"stop, asynchronous": function (cb){
+		dq ()
+				.on ("error", function (error){
+					assert.ifError (error);
+				})
+				.push (function (cb){
+					process.nextTick (cb);
+				})
+				.push (function (cb){
+					process.nextTick (cb);
+				}, function (){
+					this.stop ();
+					cb ();
+				})
+				.push (function (cb){
+					assert.fail ();
+					process.nextTick (cb);
+				});
+	},
+	"stop, asynchronous, inside task": function (outerCb){
+		dq ()
+				.on ("error", function (error){
+					assert.ifError (error);
+				})
+				.push (function (cb){
+					process.nextTick (cb);
+				})
+				.push (function (cb){
+					this.stop ();
+					cb ();
+					outerCb ();
+				})
+				.push (function (cb){
+					assert.fail ();
+					process.nextTick (cb);
+				});
+	},
+	"stop, synchronous": function (){
+		dq ()
+				.on ("error", function (error){
+					assert.ifError (error);
+				})
+				.push (function (){})
+				.push (function (){}, function (){
+					this.stop ();
+				})
+				.push (function (){
+					assert.fail ();
+				});
+	},
+	"stop, synchronous inside task": function (){
+		dq ()
+				.on ("error", function (error){
+					assert.ifError (error);
+				})
+				.push (function (){})
+				.push (function (){
+					this.stop ();
+				})
+				.push (function (){
+					assert.fail ();
 				});
 	}
 };
