@@ -182,7 +182,7 @@ __Methods__
 <a name="pause"></a>
 __DeferredQueue#pause() : undefined__
 
-Pauses the queue.
+Pauses the queue execution. Look at the [async-function-between-tasks.js](https://github.com/gagle/node-deferred-queue/blob/master/examples/async-function-between-tasks.js) example for further details.
 
 ```javascript
 q.push (function (){
