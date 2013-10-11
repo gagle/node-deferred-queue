@@ -15,14 +15,13 @@ dq ()
 		})
 		.push (function (cb){
 			process.nextTick (function (){
-				cb (new Error ("error"));
+				cb (new Error ());
 			});
 		}, function (){
-			//If this line is commented the default error handler is executed and
-			//the queue is resumed, therefore, it prints:
+			//If this line is commented the default error handler is executed and the
+			//queue is resumed, therefore, it prints:
 			//1
-			//[Error: error]
-			//2
+			//[Error]
 			this.preventDefault ();
 		})
 		.push (function (cb){

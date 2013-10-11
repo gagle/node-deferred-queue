@@ -3,13 +3,11 @@ deferred-queue
 
 _Node.js project_
 
-#### Asynchronous deferred queue ####
+#### Fastest series control flow library ####
 
-Version: 0.3.0
+Version: 0.4.0
 
-This module brings to you a very lighweight control flow mechanism that it's meant to be used as the interface between the user synchronous calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous api which tends to create the callback pyramid of doom, a deferred queue may help you. It can be also used with any built-in function.
-
-Have you seen the [Redis driver](https://github.com/mranney/node_redis)? This is how a deferred queue works.
+This module brings to you a very lighweight control flow mechanism that it's meant to be the glue between the user calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous api which tends to create the callback pyramid of doom, a deferred queue may help you. It can also be used as a standalone module.
 
 For example, suppose you have an api like the following one:
 
@@ -59,6 +57,10 @@ __Projects using this library:__
 npm install deferred-queue
 ```
 
+#### Documentation ####
+
+- [async vs deferred-queue](#async-dq)
+
 #### Functions ####
 
 - [_module_() : DeferredQueue](#create)
@@ -69,10 +71,94 @@ npm install deferred-queue
 
 ---
 
-<a name="create"></a>
-___module_.() : DeferredQueue__
+<a name="async-dq"></a>
+__async vs deferred-queue__
 
-Creates a new `DeferredQueue`.
+`async.waterfall()` is the function with more similarities with a deferred queue. Look at the [benchmark](https://github.com/gagle/node-deferred-queue/blob/master/benchmark/index.js) to see the differences among some `async` functions and a deferred queue.
+
+```javascript
+async.waterfall ([
+  //Task 1
+  function (cb){
+    cb (null, 1, 2);
+  },
+  //Task 2
+  function (n1, n2, cb){
+    //n1 is 1, n2 is 2
+    cb ();
+  }
+], function (error){
+  if (error) return console.error (error);
+});
+```
+
+```javascript
+dq ()
+    .on ("error", function (error){
+      console.error (error);
+    })
+    //Task 1
+    .push (function (cb){
+      cb (null, 1, 2);
+    }, function (error, n1, n2){
+      //n1 is 1, n2 is 2
+    })
+    //Task 2
+    .push (function (){});
+```
+
+Both are very similar but there are 3 big differences:
+
+- `async`'s error handling has a major flaw. When something fails you don't know from which task comes the error, so you cannot apply rollback or fallback strategies.
+
+  This library separates a task from its result. If you look at the task 1 you can see that [push()](#push) receives a second function as a parameter, it's the result of the task and is executed between two tasks: the current and the next. If the current task fails, the error is passed to this function and then the `error` event is emitted (if [preventDefault()]() is not called).
+
+- `async.waterfall()` forwards the result values to the next task. That's ok until you need to use these values from any other task. Javascript has closures, let's use them. There's no need to pass the values to the next task, simply store them in a closure (the second parameter of [push()](#push)) and let the user decide where to save them.
+
+    ```javascript
+    var myValue;
+    
+    dq ()
+        .on ("error", function (error){
+          console.error (error);
+        })
+        .push (function (cb){
+          cb (null, 1);
+        }, function (error, n){
+          if (error) return;
+          myValue = n;
+        })
+        .push (function (){})
+        .push (function (){
+          //Use myValue
+        });
+    ```
+
+- `async` internally uses `process.nextTick()` to call the next task. In the other hand, `deferred-queue` doesn't make any assumption, you decide how to enqueue the tasks; synchronously, asynchronously or both.
+
+    ```javascript
+    dq ()
+        .on ("error", function (error){
+          console.error (error);
+        })
+        //Synchronous
+        .push (function (){})
+        //Asynchronous
+        .push (function (cb){
+          process.nextTick (cb);
+        })
+        //Fake asynchronous (synchronous)
+        .push (function (cb){
+          cb ();
+        });
+    ```
+
+---
+
+<a name="create"></a>
+___module_() : DeferredQueue__
+
+Returns a new `DeferredQueue` instance.
 
 ```javascript
 var dq = require ("deferred-queue");
@@ -86,27 +172,10 @@ __DeferredQueue__
 
 __Methods__
 
-- [DeferredQueue#pause() : undefined](#pause)
 - [DeferredQueue#pending() : Number](#pending)
 - [DeferredQueue#preventDefault() : undefined](#preventDefault)
-- [DeferredQueue#push(task[, callback]) : DeferredQueue](#push)
-- [DeferredQueue#resume() : undefined](#resume)
-- [DeferredQueue#unshift(task[, callback]) : DeferredQueue](#unshift)
-
-<a name="pause"></a>
-__DeferredQueue#pause() : undefined__
-
-Pauses the queue. It should be used inside the callback of the `push()` or `unshift()` functions.
-
-```javascript
-q
-    .push (function (){
-      //Task
-    }, function (){
-      //Callback
-      this.pause ();
-    });
-```
+- [DeferredQueue#push(task[, result]) : DeferredQueue](#push)
+- [DeferredQueue#unshift(task[, result]) : DeferredQueue](#unshift)
 
 <a name="pending"></a>
 __DeferredQueue#pending() : Number__
@@ -116,7 +185,7 @@ Returns the number of pending tasks in the queue.
 <a name="preventDefault"></a>
 __DeferredQueue#preventDefault() : undefined__
 
-Prevents the propagation of the error to the default error handler. If an error occurs no `error` event is emitted. It should be used inside the callback of the `push()` or `unshift()` functions.
+Prevents the propagation of the error, that is, the `error` event is not emitted. It must be used from inside the callback parameter of the [push()](#push) and [unshift()](#unshift) functions.
 
 ```javascript
 q
@@ -131,13 +200,17 @@ q
 ```
 
 <a name="push"></a>
-__DeferredQueue#push(task[, callback]) : DeferredQueue__
+__DeferredQueue#push(task[, result]) : DeferredQueue__
 
-Adds a task and tries to execute it. If there are pending tasks, the task waits until all the previous tasks have been executed.
+Adds a task to the end of the queue and tries to execute it. If there are pending tasks, it simply waits until all the previous tasks have been executed.
 
-The task is the function that you want to execute. The callback is executed with the result of the previous task.
+The task is the function that you want to execute. The result is a callback that is executed when the task finishes.
 
-If the task is synchronous you don't need to call any callback, simply return a value. If you want to return an error, throw it, it will be catched. The value that is returned is passed to the callback.
+The tasks can be synchronous or asynchronous.
+
+__Synchronous__
+
+You can only return one value. If you want to return an error, throw it, it will be catched. Both the error and the value are passed to the result callback, if any.
 
 ```javascript
 q.push (function (){
@@ -147,7 +220,6 @@ q.push (function (){
   //value is 1
 });
 ```
-
 ```javascript
 q.push (function (){
   throw 1;
@@ -157,18 +229,21 @@ q.push (function (){
 });
 ```
 
-If the task is asynchronous, a function is passed as parameter. As usual, the error is the first parameter.
+__Asynchronous__
+
+If you want to execute an asynchronous task you must call the `cb` parameter when you are ready to continue. As usual, the error is the first parameter.
 
 ```javascript
 q.push (function (cb){
-  cb (null, 1, 2);
+  process.nextTick (function (){
+    cb (null, 1, 2);
+  });
 }, function (error, v1, v2){
   //error is null
   //v1 is 1
   //v2 is 2
 });
 ```
-
 ```javascript
 q.push (function (cb){
   cb (1);
@@ -178,7 +253,9 @@ q.push (function (cb){
 });
 ```
 
-There are subtle differences when the tasks are synchronous and asynchronous:
+Note: Being synchronous or asynchronous depends exclusively on the user, but if you use the `cb` parameter of the task a different internal strategy is used. In other words, you can execute a synchronous task using the `cb` parameter. This is useful when you need to return more than one value.
+
+There are subtle differences when the tasks are synchronous or asynchronous:
 
 ```javascript
 q.push (A);
@@ -192,40 +269,37 @@ q.push (B);
 If A, B, C, D are asynchronous: A → B → C → D. [Asynchronous](https://github.com/gagle/node-deferred-queue/blob/master/examples/asynchronous.js) example.  
 If A, B, C, D are synchronous: A → C → D → B. [Synchronous](https://github.com/gagle/node-deferred-queue/blob/master/examples/synchronous.js) example.  
 
-The error is also emitted with an `error` event. The queue is automatically paused. If you don't want to propagate the error to the default error handler call to the [preventDefault()](#preventdefault) function from inside the callback:
-
-```javascript
-q.on ("error", function (error){
-  //This function is not executed
-})
-q.push (function (cb){
-  cb (new Error ("error"));
-}, function (error){
-  if (error) this.preventDefault ();
-});
-```
-
-<a name="resume"></a>
-__DeferredQueue#resume() : undefined__
-
-Resumes the queue from the next task it was paused. It should be used inside the callback of the `push()` or `unshift()` functions.
+When an error occurs, it is passed to the callback and then, it is emitted. If you don't want to emit the error, call to [preventDefault()](#preventdefault):
 
 ```javascript
 q
+    .on ("error", function (error){
+      //This function is not executed
+    })
     .push (function (){
-      //Task
-    }, function (){
-      //Callback
-      this.pause ();
-      var me = this;
-      foo (function (error){
-        if (error) return console.error (error);
-        me.resume ();
-      });
+      throw new Error ();
+    }, function (error){
+      if (error) this.preventDefault ();
     });
 ```
 
-<a name="unshift"></a>
-__DeferredQueue#unshift(task[, callback]) : DeferredQueue__
+__I want to execute an asynchronous function inside the result callback__
 
-Adds a task to the beginning of the queue. It has the same functionality as the `push()` function.
+You can. The last parameter of the result callback, `cb`, is another callback that you must call in order to continue executing the remaining tasks.
+
+```javascript
+q.push (function (){
+  return 1;
+}, function (error, v, cb){
+  //v is 1
+  process.nextTick (function (){
+    //If you pass an error it will be emitted
+    cb (new Error ());
+  });
+});
+```
+
+<a name="unshift"></a>
+__DeferredQueue#unshift(task[, result]) : DeferredQueue__
+
+Adds a task to the beginning of the queue. It has the same functionality as the [push()](#push) function.

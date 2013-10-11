@@ -14,25 +14,19 @@ dq ()
 				//The first parameter is the error
 				cb (null, 1, 2);
 			});
-		}, function (error, v1, v2){
-			//This function is executed after the previous task and before the next
-			//task
+		}, function (error, v1, v2, cb){
 			//v1 is 1
 			//v2 is 2
 			console.log (v1, v2);
 			
-			//The queue is paused 1s
-			this.pause ();
-			var me = this;
-			setTimeout (function (){
-				me.resume ();
-			}, 1000);
+			//Wait 1s
+			setTimeout (cb, 1000);
 		})
 		.push (function (){
 			//Synchronous task
 			return 5;
-		}, function (error, v1){
-			console.log (v1);
+		}, function (error, v){
+			console.log (v);
 		})
 		.unshift (function (cb){
 			//The task is added to the beginning of the queue
@@ -44,23 +38,19 @@ dq ()
 		})
 		.push (function (cb){
 			process.nextTick (function (){
-				cb (new Error ("error"));
+				cb (new Error ());
 			});
 		}, function (error){
-			//The error is first passed to this function and then is forwarded to the
-			//error handler
-			if (error){
-				//Here you typically do clean up tasks
-			}
+			//The error is passed to this function and then is emitted if
+			//preventDefault() is not called
 		})
 		.push (function (){
-			//This task is never executed because the previous task returned an error,
-			//the queue is automatically paused
+			//This task is never executed because the previous task returned an error
 		});
 
 /*
 1 2
 3 4
 5
-[Error: error]
+[Error]
 */

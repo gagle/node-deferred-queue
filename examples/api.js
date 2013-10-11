@@ -141,12 +141,6 @@ Usage example:
 4. Update Paul
 5. Remove Maria
 6. Read Paul
-
-If any of these operations fail the queue is paused and the error handler is
-executed with the error.
-
-A deferred queue is useful when you need to execute tasks with an specific
-order. The tasks are configured synchronously but executed asynchronously.
 */
 
 var c = client.create ();

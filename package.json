@@ -1,13 +1,17 @@
 {
 	"name": "deferred-queue",
-	"version": "0.3.0",
-	"description": "Asynchronous deferred queue",
+	"version": "0.4.0",
+	"description": "Fastest series control flow library",
 	"keywords": ["asynchronous", "deferred", "queue", "flow", "task"],
 	"author": "Gabriel Llamas <gagle@outlook.com>",
 	"repository": "git://github.com/gagle/node-deferred-queue.git",
 	"engines": {
 		"node": ">=0.10"
 	},
+  "devDependencies": {
+    "async": "*",
+		"speedy": "*"
+  },
 	"license": "MIT",
 	"main": "lib"
 }
