@@ -175,6 +175,7 @@ __Methods__
 - [DeferredQueue#pending() : Number](#pending)
 - [DeferredQueue#preventDefault() : undefined](#preventDefault)
 - [DeferredQueue#push(task[, result]) : DeferredQueue](#push)
+- [DeferredQueue#stop() : undefined](#stop)
 - [DeferredQueue#unshift(task[, result]) : DeferredQueue](#unshift)
 
 <a name="pending"></a>
@@ -298,6 +299,11 @@ q.push (function (){
   });
 });
 ```
+
+<a name="stop"></a>
+__DeferredQueue#stop() : undefined__
+
+Stops the queue execution. Look at the [stop.js](https://github.com/gagle/node-deferred-queue/blob/master/examples/stop.js) example for further details.
 
 <a name="unshift"></a>
 __DeferredQueue#unshift(task[, result]) : DeferredQueue__
