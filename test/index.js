@@ -104,7 +104,7 @@ var tests = {
 		
 		assert.deepEqual (arr, [1, 2, 3]);
 	},
-	"asynchronous, push": function (cb){
+	"asynchronous, push": function (done){
 		var arr = [];
 		dq ()
 				.on ("error", function (error){
@@ -130,10 +130,10 @@ var tests = {
 				}, function (error){
 					assert.ok (!error);
 					assert.deepEqual (arr, [1, 2, 3]);
-					cb ();
+					done ();
 				});
 	},
-	"asynchronous, unshift": function (cb){
+	"asynchronous, unshift": function (done){
 		var arr = [];
 		dq ()
 				.on ("error", function (error){
@@ -153,7 +153,7 @@ var tests = {
 				}, function (error){
 					assert.ok (!error);
 					assert.deepEqual (arr, [1, 2, 3]);
-					cb ();
+					done ();
 				})
 				.unshift (function (cb){
 					process.nextTick (function (){
@@ -162,7 +162,7 @@ var tests = {
 					});
 				});
 	},
-	"asynchronous, callback, no error": function (cb){
+	"asynchronous, callback, no error": function (done){
 		var arr = [];
 		dq ()
 				.on ("error", function (error){
@@ -210,13 +210,13 @@ var tests = {
 				}, function (error){
 					assert.ok (!error);
 					assert.deepEqual (arr, [1, 2, 3, 4, 5, 6, 7]);
-					cb ();
+					done ();
 				});
 	},
-	"asynchronous, callback, error": function (cb){
+	"asynchronous, callback, error": function (done){
 		var pending = 3;
 		var finish = function (){
-			if (!--pending) cb ();
+			if (!--pending) done ();
 		};
 		dq ()
 				.on ("error", function (error){
@@ -277,7 +277,7 @@ var tests = {
 					assert.deepEqual (arr, [1, 2, 3, 4, 5, 6]);
 				});
 	},
-	"push and unshift, asynchronous": function (cb){
+	"push and unshift, asynchronous": function (done){
 		var arr = [];
 		dq ()
 				.on ("error", function (error){
@@ -302,7 +302,7 @@ var tests = {
 				.push (function (){
 					arr.push (6);
 					assert.deepEqual (arr, [1, 2, 3, 4, 5, 6]);
-					cb ();
+					done ();
 				})
 				.unshift (function (cb){
 					arr.push (2);
@@ -326,7 +326,7 @@ var tests = {
 					});
 				});
 	},
-	"push inside result, asynchronous": function (outerCb){
+	"push inside result, asynchronous": function (done){
 		var arr = [];
 		dq ()
 				.on ("error", function (error){
@@ -344,14 +344,14 @@ var tests = {
 								me.push (function (){
 									arr.push (3);
 									assert.deepEqual (arr, [1, 2, 3]);
-									outerCb ();
+									done ();
 								});
 							});
 						});
 					});
 				});
 	},
-	"stop, asynchronous": function (cb){
+	"stop, asynchronous": function (done){
 		dq ()
 				.on ("error", function (error){
 					assert.ifError (error);
@@ -363,14 +363,14 @@ var tests = {
 					process.nextTick (cb);
 				}, function (){
 					this.stop ();
-					cb ();
+					done ();
 				})
 				.push (function (cb){
 					assert.fail ();
 					process.nextTick (cb);
 				});
 	},
-	"stop, asynchronous, inside task": function (outerCb){
+	"stop, asynchronous, inside task": function (done){
 		dq ()
 				.on ("error", function (error){
 					assert.ifError (error);
@@ -381,7 +381,7 @@ var tests = {
 				.push (function (cb){
 					this.stop ();
 					cb ();
-					outerCb ();
+					done ();
 				})
 				.push (function (cb){
 					assert.fail ();
