@@ -93,7 +93,7 @@ Reader.prototype.read = function (bytes, cb){
 			me._read (bytes, done);
 		}
 	}, function (error, bytesRead, buffer){
-		if (!error)cb (bytesRead, buffer);
+		if (!error) cb (bytesRead, buffer);
 	});
 	
 	return this;
