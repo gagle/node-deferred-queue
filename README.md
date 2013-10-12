@@ -3,7 +3,7 @@ deferred-queue
 
 _Node.js project_
 
-#### Fastest series control flow library ####
+#### Series control flow library ####
 
 Version: 0.5.0
 
