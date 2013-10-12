@@ -35,11 +35,21 @@ speedy.run ({
 			cb ();
 		}});
 	},
-	"deferred queue": function (cb){
+	"deferred-queue.sync": function (cb){
 		dq.module ()
 				.on ("error", dq.error)
-				.push (dq.fn1, dq.fn3)
-				.push (dq.fn2, dq.fn4)
+				.push (dq.sync1, dq.fn3)
+				.push (dq.sync2, dq.fn4)
+				//The last cb should be called from dq.fn4
+				.push (function (){
+					cb ();
+				})
+	},
+	"deferred-queue.async": function (cb){
+		dq.module ()
+				.on ("error", dq.error)
+				.push (dq.async1, dq.fn3)
+				.push (dq.async2, dq.fn4)
 				//The last cb should be called from dq.fn4
 				.push (function (){
 					cb ();
@@ -64,26 +74,28 @@ Node v0.10.20
 V8 v3.14.5.9
 Speedy v0.0.8
 
-Benchmarks: 6
+Benchmarks: 7
 Timeout: 1000ms (1s 0ms)
 Samples: 3
 Total time per benchmark: ~3000ms (3s 0ms)
-Total time: ~18000ms (18s 0ms)
+Total time: ~21000ms (21s 0ms)
 
 Higher is better (ops/sec)
 
 async.series
-  234,209 ± 0.3%
+  232,492 ± 0.5%
 async.waterfall
-  97,090 ± 0.2%
+  94,183 ± 0.4%
 async.queue
-  112,793 ± 0.2%
+  113,122 ± 0.0%
 async.cargo
-  89,458 ± 0.1%
-deferred queue
-  503,729 ± 0.0%
+  85,883 ± 0.1%
+deferred-queue.sync
+  609,768 ± 0.0%
+deferred-queue.async
+  492,845 ± 0.0%
 step
-  473,415 ± 0.2%
+  448,365 ± 0.1%
 
-Elapsed time: 18440ms (18s 440ms)
+Elapsed time: 21512ms (21s 512ms)
 */
