@@ -2,6 +2,7 @@
 
 var speedy = require ("speedy");
 var dq = require ("./libs/deferred-queue");
+var callbacks = require ("./libs/callbacks");
 var async = require ("./libs/async");
 var step = require ("./libs/step");
 
@@ -34,6 +35,11 @@ speedy.run ({
 		c.push ({ cb: function (){
 			cb ();
 		}});
+	},
+	"callbacks": function (cb){
+		callbacks.module (function (){
+			cb ();
+		});
 	},
 	"deferred-queue.sync": function (cb){
 		dq.module ()
@@ -74,28 +80,30 @@ Node v0.10.20
 V8 v3.14.5.9
 Speedy v0.0.8
 
-Benchmarks: 7
+Benchmarks: 8
 Timeout: 1000ms (1s 0ms)
 Samples: 3
 Total time per benchmark: ~3000ms (3s 0ms)
-Total time: ~21000ms (21s 0ms)
+Total time: ~24000ms (24s 0ms)
 
 Higher is better (ops/sec)
 
 async.series
-  232,492 ± 0.5%
+  245,959 ± 0.1%
 async.waterfall
-  94,183 ± 0.4%
+  97,994 ± 0.0%
 async.queue
-  113,122 ± 0.0%
+  114,693 ± 0.1%
 async.cargo
-  85,883 ± 0.1%
+  90,512 ± 0.1%
+callbacks
+  3,805,804 ± 0.0%
 deferred-queue.sync
-  609,768 ± 0.0%
+  624,542 ± 0.0%
 deferred-queue.async
-  492,845 ± 0.0%
+  541,965 ± 0.0%
 step
-  448,365 ± 0.1%
+  506,939 ± 0.1%
 
-Elapsed time: 21512ms (21s 512ms)
+Elapsed time: 24586ms (24s 586ms)
 */
