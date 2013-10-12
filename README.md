@@ -74,7 +74,7 @@ npm install deferred-queue
 <a name="async-dq"></a>
 __async vs deferred-queue__
 
-`async.waterfall()` is the function with more similarities with a deferred queue. Look at the [benchmark](https://github.com/gagle/node-deferred-queue/blob/master/benchmark/index.js) to see the differences among some `async` functions and a deferred queue.
+`async.waterfall()` is the function with more similarities with a deferred queue.
 
 ```javascript
 async.waterfall ([

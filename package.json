@@ -9,8 +9,9 @@
 		"node": ">=0.10"
 	},
   "devDependencies": {
-    "async": "*",
-		"speedy": "*"
+    "async": "0.2.x",
+		"speedy": "*",
+		"step": "0.0.x"
   },
 	"license": "MIT",
 	"main": "lib"
