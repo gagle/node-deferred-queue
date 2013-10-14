@@ -5,6 +5,7 @@ var dq = require ("./libs/deferred-queue");
 var callbacks = require ("./libs/callbacks");
 var async = require ("./libs/async");
 var step = require ("./libs/step");
+var q = require ("./libs/q");
 
 speedy.run ({
 	"async.series": function (cb){
@@ -61,6 +62,14 @@ speedy.run ({
 					cb ();
 				})
 	},
+	"q": function (cb){
+		q.makePromiseFn1 ()
+				.then (q.fn1, q.error)
+				.then (q.fn2, q.error)
+				//The last cb should be called from q.fn2
+				.then (cb)
+				.done ();
+	},
 	"step": function (cb){
 		step.module (
 			step.fn1,
@@ -80,30 +89,32 @@ Node v0.10.20
 V8 v3.14.5.9
 Speedy v0.0.8
 
-Benchmarks: 8
+Benchmarks: 9
 Timeout: 1000ms (1s 0ms)
 Samples: 3
 Total time per benchmark: ~3000ms (3s 0ms)
-Total time: ~24000ms (24s 0ms)
+Total time: ~27000ms (27s 0ms)
 
 Higher is better (ops/sec)
 
 async.series
-  245,959 ± 0.1%
+  245,241 ± 0.2%
 async.waterfall
-  97,994 ± 0.0%
+  96,190 ± 0.0%
 async.queue
-  114,693 ± 0.1%
+  107,040 ± 0.1%
 async.cargo
-  90,512 ± 0.1%
+  85,646 ± 0.1%
 callbacks
-  3,805,804 ± 0.0%
+  3,637,659 ± 0.0%
 deferred-queue.sync
-  624,542 ± 0.0%
+  612,903 ± 0.0%
 deferred-queue.async
-  541,965 ± 0.0%
+  500,684 ± 0.0%
+q
+  18,723 ± 0.3%
 step
-  506,939 ± 0.1%
+  473,156 ± 0.3%
 
-Elapsed time: 24586ms (24s 586ms)
+Elapsed time: 27659ms (27s 659ms)
 */

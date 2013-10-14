@@ -10,6 +10,7 @@
 	},
   "devDependencies": {
     "async": "0.2.x",
+		"q": "0.9.x"
 		"speedy": "*",
 		"step": "0.0.x"
   },
