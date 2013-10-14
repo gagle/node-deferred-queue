@@ -67,7 +67,9 @@ speedy.run ({
 				.then (q.fn1, q.error)
 				.then (q.fn2, q.error)
 				//The last cb should be called from q.fn2
-				.then (cb)
+				.then (function (){
+					cb ();
+				})
 				.done ();
 	},
 	"step": function (cb){
