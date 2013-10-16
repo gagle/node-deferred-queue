@@ -6,6 +6,8 @@ var callbacks = require ("./libs/callbacks");
 var async = require ("./libs/async");
 var step = require ("./libs/step");
 var q = require ("./libs/q");
+var bluebird = require ("./libs/bluebird");
+
 
 speedy.run ({
 	"async.series": function (cb){
@@ -37,6 +39,15 @@ speedy.run ({
 			cb ();
 		}});
 	},
+	"bluebird": function (cb){
+		bluebird.makePromiseFn1 ()
+				.then (bluebird.fn1)
+				.then (bluebird.fn2)
+				//The last cb should be called from bluebird.fn2
+				.then (function (){
+					cb ();
+				}, bluebird.error);
+	},
 	"callbacks": function (cb){
 		callbacks.module (function (){
 			cb ();
@@ -64,13 +75,12 @@ speedy.run ({
 	},
 	"q": function (cb){
 		q.makePromiseFn1 ()
-				.then (q.fn1, q.error)
-				.then (q.fn2, q.error)
+				.then (q.fn1)
+				.then (q.fn2)
 				//The last cb should be called from q.fn2
 				.then (function (){
 					cb ();
-				})
-				.done ();
+				}, q.error);
 	},
 	"step": function (cb){
 		step.module (
@@ -89,34 +99,36 @@ File: index.js
 
 Node v0.10.20
 V8 v3.14.5.9
-Speedy v0.0.8
+Speedy v0.1.1
 
-Benchmarks: 9
+Tests: 10
 Timeout: 1000ms (1s 0ms)
 Samples: 3
-Total time per benchmark: ~3000ms (3s 0ms)
-Total time: ~27000ms (27s 0ms)
+Total time per test: ~3000ms (3s 0ms)
+Total time: ~30000ms (30s 0ms)
 
 Higher is better (ops/sec)
 
 async.series
-  245,241 ± 0.2%
+  222,424 ± 0.4%
 async.waterfall
-  96,190 ± 0.0%
+  97,389 ± 0.0%
 async.queue
-  107,040 ± 0.1%
+  113,871 ± 0.1%
 async.cargo
-  85,646 ± 0.1%
+  87,810 ± 0.0%
+bluebird
+  190,451 ± 0.0%
 callbacks
-  3,637,659 ± 0.0%
+  3,765,992 ± 0.0%
 deferred-queue.sync
-  612,903 ± 0.0%
+  643,792 ± 0.1%
 deferred-queue.async
-  500,684 ± 0.0%
+  550,073 ± 0.0%
 q
-  18,723 ± 0.3%
+  22,564 ± 0.6%
 step
-  473,156 ± 0.3%
+  486,440 ± 0.4%
 
-Elapsed time: 27659ms (27s 659ms)
+Elapsed time: 30263ms (30s 263ms)
 */
