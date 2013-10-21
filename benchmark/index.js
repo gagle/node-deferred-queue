@@ -8,7 +8,6 @@ var step = require ("./libs/step");
 var q = require ("./libs/q");
 var bluebird = require ("./libs/bluebird");
 
-
 speedy.run ({
 	"async.series": function (cb){
 		async.module.series ([async.series1, async.series2], function (error){
@@ -97,7 +96,7 @@ speedy.run ({
 /*
 File: index.js
 
-Node v0.10.20
+Node v0.10.21
 V8 v3.14.5.9
 Speedy v0.1.1
 
@@ -110,25 +109,25 @@ Total time: ~30000ms (30s 0ms)
 Higher is better (ops/sec)
 
 async.series
-  222,424 ± 0.4%
+  242,888 ± 0.5%
 async.waterfall
-  97,389 ± 0.0%
+  94,801 ± 0.1%
 async.queue
-  113,871 ± 0.1%
+  109,327 ± 0.2%
 async.cargo
-  87,810 ± 0.0%
+  85,858 ± 0.0%
 bluebird
-  190,451 ± 0.0%
+  185,495 ± 0.1%
 callbacks
-  3,765,992 ± 0.0%
+  3,698,234 ± 0.0%
 deferred-queue.sync
-  643,792 ± 0.1%
+  609,216 ± 0.0%
 deferred-queue.async
-  550,073 ± 0.0%
+  500,103 ± 0.1%
 q
-  22,564 ± 0.6%
+  22,192 ± 0.2%
 step
-  486,440 ± 0.4%
+  460,773 ± 0.0%
 
-Elapsed time: 30263ms (30s 263ms)
+Elapsed time: 30279ms (30s 279ms)
 */

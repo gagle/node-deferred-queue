@@ -5,7 +5,7 @@ _Node.js project_
 
 #### Series control flow library ####
 
-Version: 0.5.0
+Version: 0.5.1
 
 This module brings to you a very lighweight control flow mechanism that it's meant to be the glue between the user calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous api which tends to create the callback pyramid of doom, a deferred queue may help you. It can also be used as a standalone module.
 
