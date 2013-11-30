@@ -15,6 +15,9 @@
 		"speedy": "*",
 		"step": "0.0.x"
   },
+	"scripts": {
+		"test": "node test/index"
+	},
 	"license": "MIT",
 	"main": "lib"
 }
