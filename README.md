@@ -1,12 +1,12 @@
 deferred-queue
 ==============
 
-_Node.js project_
-
 #### Series control flow library ####
 
 [![NPM version](https://badge.fury.io/js/deferred-queue.png)](http://badge.fury.io/js/deferred-queue "Fury Version Badge")
 [![Build Status](https://secure.travis-ci.org/gagle/node-deferred-queue.png)](http://travis-ci.org/gagle/node-deferred-queue "Travis CI Badge")
+
+[![NPM installation](https://nodei.co/npm/deferred-queue.png?mini=true)](https://nodei.co/npm/deferred-queue "NodeICO Badge")
 
 This module brings to you a very lighweight control flow mechanism that it's meant to be the glue between the user calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous api which tends to create the callback pyramid of doom, a deferred queue may help you. It can also be used as a standalone module.
 
@@ -51,12 +51,6 @@ __Projects using this library:__
 
 - [binary-reader](https://github.com/gagle/node-binary-reader): A real project based on the previous example.
 - [seraphim](https://github.com/gagle/node-seraphim): Configuration management made easy.
-
-#### Installation ####
-
-```
-npm install deferred-queue
-```
 
 #### Documentation ####
 
