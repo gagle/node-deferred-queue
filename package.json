@@ -1,23 +1,23 @@
 {
-	"name": "deferred-queue",
-	"version": "0.5.1",
-	"description": "Series control flow library",
-	"keywords": ["asynchronous", "deferred", "queue", "flow", "task"],
-	"author": "Gabriel Llamas <gagle@outlook.com>",
-	"repository": "git://github.com/gagle/node-deferred-queue.git",
-	"engines": {
-		"node": ">=0.10"
-	},
+  "name": "deferred-queue",
+  "version": "0.5.1",
+  "description": "Series control flow library",
+  "keywords": ["asynchronous", "deferred", "queue", "flow", "task"],
+  "author": "Gabriel Llamas <gagle@outlook.com>",
+  "repository": "git://github.com/gagle/node-deferred-queue.git",
+  "engines": {
+    "node": ">=0.10"
+  },
   "devDependencies": {
     "async": "0.2.x",
     "bluebird": "0.8.x",
-		"q": "0.9.x",
-		"speedy": "*",
-		"step": "0.0.x"
+    "q": "0.9.x",
+    "speedy": "*",
+    "step": "0.0.x"
   },
-	"scripts": {
-		"test": "node test/index"
-	},
-	"license": "MIT",
-	"main": "lib"
+  "scripts": {
+    "test": "node test/index"
+  },
+  "license": "MIT",
+  "main": "lib"
 }

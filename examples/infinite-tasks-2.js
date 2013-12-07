@@ -5,12 +5,12 @@ var dq = require ("../lib");
 var q = dq ();
 
 (function push (i){
-	q.push (function (){
-		console.log (i);
-		setTimeout (function (){
-			push (i + 1);
-		}, 1000);
-	});
+  q.push (function (){
+    console.log (i);
+    setTimeout (function (){
+      push (i + 1);
+    }, 1000);
+  });
 })(0);
 
 /*
