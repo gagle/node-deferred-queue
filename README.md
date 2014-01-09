@@ -10,7 +10,7 @@ deferred-queue
 
 This module brings to you a very lighweight control flow mechanism that it's meant to be the glue between the user calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous api which tends to create the callback pyramid of doom, a deferred queue may help you. It can also be used as a standalone module.
 
-For example, suppose you have an api like the following one:
+For example, suppose you have an API like the following one:
 
 ```javascript
 var r = new Reader ("file");
@@ -212,9 +212,9 @@ q.push (function (){
 <a name="push"></a>
 __DeferredQueue#push(task[, result]) : DeferredQueue__
 
-Adds a task to the end of the queue and tries to execute it. If there are pending tasks, it simply waits until all the previous tasks have been executed.
+Adds a task to the end of the queue and tries to execute it. If there are pending tasks, it simply waits until all the previous tasks have been executed. Think about it like a queue that is permanently executing tasks. Whenever you add a task it can be immediately executed because the queue is empty or enqueued if there are pending tasks that need to be executed before.
 
-The task is the function that you want to execute. The result is a callback that is executed when the task finishes.
+The `task` is the function that you want to execute. The `result` is a callback that is executed when the task finishes.
 
 The tasks can be synchronous or asynchronous.
 
