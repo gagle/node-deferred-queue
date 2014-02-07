@@ -8,7 +8,7 @@ deferred-queue
 
 [![NPM installation](https://nodei.co/npm/deferred-queue.png?mini=true)](https://nodei.co/npm/deferred-queue "NodeICO Badge")
 
-This module brings to you a very lighweight control flow mechanism that it's meant to be the glue between the user calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous api which tends to create the callback pyramid of doom, a deferred queue may help you. It can also be used as a standalone module.
+This module brings to you a very lighweight control flow mechanism that it's meant to be the glue between the user calls and the asynchronous nature of your module. It provides a fluent interface, so if your module has an asynchronous API which tends to create the callback pyramid of doom, a deferred queue may help you. It can be also used as a standalone module.
 
 For example, suppose you have an API like the following one:
 
@@ -50,7 +50,7 @@ Look at the [reader](https://github.com/gagle/node-deferred-queue/blob/master/ex
 __Projects using this library:__
 
 - [binary-reader](https://github.com/gagle/node-binary-reader): A real project based on the previous example.
-- [seraphim](https://github.com/gagle/node-seraphim): Configuration management made easy.
+- [seraphim](https://github.com/gagle/node-seraphim): Configuration loading made easy.
 
 #### Documentation ####
 
@@ -129,7 +129,7 @@ Both are very similar but there are 3 big differences:
         });
     ```
 
-- `async` internally uses `process.nextTick()` to call the next task. In the other hand, `deferred-queue` doesn't make any assumption, you decide how to enqueue the tasks; synchronously, asynchronously or both.
+- `async` internally uses `process.nextTick()` to call the next task. On the other hand, `deferred-queue` doesn't make any assumption, you decide how to enqueue the tasks; synchronously, asynchronously or both.
 
     ```javascript
     dq ()
@@ -153,7 +153,7 @@ Both are very similar but there are 3 big differences:
 <a name="create"></a>
 ___module_() : DeferredQueue__
 
-Returns a new `DeferredQueue` instance.
+Returns a new [DeferredQueue](#deferredqueue) instance.
 
 ```javascript
 var dq = require ("deferred-queue");
@@ -165,6 +165,10 @@ var q = dq ();
 <a name="deferredqueue"></a>
 __DeferredQueue__
 
+__Events__
+
+- [error](#event_error)
+
 __Methods__
 
 - [DeferredQueue#pause() : undefined](#pause)
@@ -174,24 +178,41 @@ __Methods__
 - [DeferredQueue#resume() : undefined](#resume)
 - [DeferredQueue#unshift(task[, result]) : DeferredQueue](#unshift)
 
+<a name="event_error"></a>
+__Error__
+
+Arguments: `error`.
+
+Emitted when an error occurs.
+
+---
+
 <a name="pause"></a>
 __DeferredQueue#pause() : undefined__
 
 Pauses the queue execution. Look at the [async-function-between-tasks.js](https://github.com/gagle/node-deferred-queue/blob/master/examples/async-function-between-tasks.js) example for further details.
 
 ```javascript
-q.push (function (){
-	//Task
-}, function (){
-	//Result
-	this.pause ();
-});
+q
+    .push (function (){
+    	//Task
+    }, function (){
+    	//Callback
+    	this.pause ();
+    })
+    .push (function (){
+    	//This task is not executed until you call to "resume()"
+    });
 ```
+
+---
 
 <a name="pending"></a>
 __DeferredQueue#pending() : Number__
 
 Returns the number of pending tasks in the queue.
+
+---
 
 <a name="preventDefault"></a>
 __DeferredQueue#preventDefault() : undefined__
@@ -201,6 +222,7 @@ Prevents the propagation of the error, that is, the `error` event is not emitted
 ```javascript
 q.push (function (){
 	//Task
+	throw new Error ();
 }, function (error){
 	//Callback
 	if (error){
@@ -209,10 +231,12 @@ q.push (function (){
 });
 ```
 
+---
+
 <a name="push"></a>
 __DeferredQueue#push(task[, result]) : DeferredQueue__
 
-Adds a task to the end of the queue and tries to execute it. If there are pending tasks, it simply waits until all the previous tasks have been executed. Think about it like a queue that is permanently executing tasks. Whenever you add a task it can be immediately executed because the queue is empty or enqueued if there are pending tasks that need to be executed before.
+Adds a task to the end of the queue and tries to execute it. If there are pending tasks, it simply waits until all the previous tasks have been executed. Think about it like a queue that is permanently executing tasks. Whenever you add a task it can be immediately executed because the queue is empty or enqueued if there are pending tasks that need to be executed first.
 
 The `task` is the function that you want to execute. The `result` is a callback that is executed when the task finishes.
 
@@ -241,7 +265,7 @@ q.push (function (){
 
 __Asynchronous__
 
-If you want to execute an asynchronous task you must call the `cb` parameter when you are ready to continue. As usual, the error is the first parameter.
+If you want to execute an asynchronous task, you must call the `cb` parameter when you are ready to continue. As usual, the error is the first parameter.
 
 ```javascript
 q.push (function (cb){
@@ -263,7 +287,7 @@ q.push (function (cb){
 });
 ```
 
-Note: Being synchronous or asynchronous depends exclusively on the user, but if you use the `cb` parameter of the task a different internal strategy is used. In other words, you can execute a synchronous task using the `cb` parameter. This is useful when you need to return more than one value.
+Note: Being synchronous or asynchronous depends exclusively on the user, but if you use the `cb` parameter, a different internal strategy is used. In other words, you can execute a synchronous task using the `cb` parameter. This is useful when you need to return more than one value.
 
 There are subtle differences when the tasks are synchronous or asynchronous:
 
@@ -295,24 +319,16 @@ q
 
 __I want to execute an asynchronous function inside the result callback__
 
-You can. The last parameter of the result callback, `cb`, is another callback that you must call in order to continue executing the remaining tasks.
+You can. Pause the queue and when you are ready to continue, resume it. Look at the [async-function-between-tasks.js](https://github.com/gagle/node-deferred-queue/blob/master/examples/async-function-between-tasks.js) example for further details.
 
-```javascript
-q.push (function (){
-  return 1;
-}, function (error, v, cb){
-  //v is 1
-  process.nextTick (function (){
-    //If you pass an error it will be emitted
-    cb (new Error ());
-  });
-});
-```
+---
 
 <a name="resume"></a>
 __DeferredQueue#resume() : undefined__
 
 Resumes the queue execution. Look at the [async-function-between-tasks.js](https://github.com/gagle/node-deferred-queue/blob/master/examples/async-function-between-tasks.js) example for further details.
+
+---
 
 <a name="unshift"></a>
 __DeferredQueue#unshift(task[, result]) : DeferredQueue__

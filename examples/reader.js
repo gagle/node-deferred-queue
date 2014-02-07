@@ -19,7 +19,7 @@ var Reader = function (path){
   
   var me = this;
   this._q = dq ().on ("error", function (error){
-    //Forward the queue error event to the reader error handler
+    //Forward the queue error event to the reader error's event
     if (!me._fd){
       me._q = null;
       return me.emit ("error", error);
@@ -58,9 +58,9 @@ Reader.prototype.close = function (){
       done (error);
     });
   }, function (error){
-    //If an error occurs the default error handler is not called because it
-    //tries to close the file automatically, so if close() fails there would be
-    //infinite calls to close()
+    //If an error occurs, doesn't emit an error event because it tries to close
+    //the file automatically, so if close() fails there would be infinite calls
+    //to close()
     if (error){
       this.preventDefault ();
       me.emit ("error", error);
